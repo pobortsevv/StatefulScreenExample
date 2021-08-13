@@ -31,7 +31,16 @@ protocol AuthorizationRouting: ViewableRouting {
 	// routesToNextScreens!!!
 }
 
+protocol AuthorizationPresentable: Presentable {}
+
 // MARK: Outputs
+
+typealias AuthorizationInteractorState = LoadingState<Profile, Error>
+
+/// Здесь описаны состояния экрана
+struct AuthorizationPresenterOutput {
+	
+}
 
 struct AuthorizationViewOutput {
 	let getSMSButton: ControlEvent<Void>

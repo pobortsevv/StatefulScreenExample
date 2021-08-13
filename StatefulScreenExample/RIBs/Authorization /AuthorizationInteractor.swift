@@ -7,13 +7,38 @@
 //
 
 import RIBs
+import RxCocoa
 import RxSwift
 
 final class AuthorizationInteractor: Interactor, AuthorizationInteractable {
-	weak var router: AuthorizationRouting?
+	// MARK: Dependecies
 	
+	weak var router: AuthorizationRouting?
 	private let disposeBag = DisposeBag()
+	
+	// MARK: Internals
+	
+	// private let _state
+	
+	private let responses = Responses()
+	
+	override func didBecomeActive() {
+		super.didBecomeActive()
+		loadAuthorization()
+	}
+
+	private func loadAuthorization() {
+		
+	}
+	
+	
+	
+	
+	
 }
+
+
+// MARK: - IOTransformer
 
 extension AuthorizationInteractor: IOTransformer {
 	func transform(input: AuthorizationViewOutput) -> Empty {
@@ -27,5 +52,26 @@ extension AuthorizationInteractor: IOTransformer {
 //		input.phoneNunberTextField.subscribe(onNext: {[]})
 		
 		return Empty()
+	}
+}
+
+// MARK: - Help Methods
+
+extension ProfileInteractor {
+	private func makeRequests() -> Requests {
+		Requests(loadAuthorization: { [weak self] in self?.loadProfile() })
+	}
+}
+
+// MARK: - Nested Types
+
+extension AuthorizationInteractor {
+	private struct Responses {
+		@PublishObservable var didLoadAuthorization: Observable<Profile>
+		@PublishObservable var authorizationLoadingError: Observable<Error>
+	}
+	
+	private struct Requests {
+		let loadAuthorization: VoidClosure
 	}
 }
