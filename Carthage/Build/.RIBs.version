@@ -1,0 +1,11 @@
+{
+  "commitish" : "6d66dd1a7ccf806eec7176324d7fc6ebafb616e1",
+  "iOS" : [
+    {
+      "hash" : "bb3ccb283bff56df3dc0e77a4b09a63f647bdcfd8cb94bb1a44cf602afac48e8",
+      "name" : "RIBs",
+      "linking" : "dynamic",
+      "swiftToolchainVersion" : "5.4.2 (swiftlang-1205.0.28.2 clang-1205.0.19.57)"
+    }
+  ]
+}

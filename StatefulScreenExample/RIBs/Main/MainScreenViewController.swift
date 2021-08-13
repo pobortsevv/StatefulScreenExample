@@ -13,7 +13,8 @@ import UIKit
 final class MainScreenViewController: UIViewController, MainScreenViewControllable {
   @IBOutlet private weak var stackViewScreenButton: UIButton!
   @IBOutlet private weak var tableViewScreenButton: UIButton!
-
+	@IBOutlet weak var authorizationButton: UIButton!
+	
   override func viewDidLoad() {
     super.viewDidLoad()
     initialSetup()
@@ -29,7 +30,8 @@ extension MainScreenViewController {
 extension MainScreenViewController: BindableView {
   func getOutput() -> MainScreenViewOutput {
     return MainScreenViewOutput(stackViewButtonTap: stackViewScreenButton.rx.tap,
-                                tableViewButtonTap: tableViewScreenButton.rx.tap)
+                                tableViewButtonTap: tableViewScreenButton.rx.tap,
+																authorizationButtonTap: authorizationButton.rx.tap)
   }
 
   func bindWith(_ input: Empty) {}

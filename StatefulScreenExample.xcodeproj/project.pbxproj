@@ -65,6 +65,12 @@
 		8EFD7C3D239C16CB002EBA60 /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C3C239C16CB002EBA60 /* ErrorMessageView.swift */; };
 		8EFD7C42239C1A04002EBA60 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C41239C1A04002EBA60 /* UIView+Extensions.swift */; };
 		8EFD7C4D239C22A4002EBA60 /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */; };
+		ACD89BA626C55C9B0007C140 /* AuthorizationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA126C55C9B0007C140 /* AuthorizationRouter.swift */; };
+		ACD89BA726C55C9B0007C140 /* AuthorizationViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ACD89BA226C55C9B0007C140 /* AuthorizationViewController.storyboard */; };
+		ACD89BA826C55C9B0007C140 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA326C55C9B0007C140 /* AuthorizationViewController.swift */; };
+		ACD89BA926C55C9B0007C140 /* AuthorizationBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */; };
+		ACD89BAA26C55C9B0007C140 /* AuthorizationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */; };
+		ACD89BAC26C55CBA0007C140 /* AuthorizationProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -152,6 +158,12 @@
 		8EFD7C3C239C16CB002EBA60 /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
 		8EFD7C41239C1A04002EBA60 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
+		ACD89BA126C55C9B0007C140 /* AuthorizationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationRouter.swift; sourceTree = "<group>"; };
+		ACD89BA226C55C9B0007C140 /* AuthorizationViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AuthorizationViewController.storyboard; sourceTree = "<group>"; };
+		ACD89BA326C55C9B0007C140 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
+		ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationBuilder.swift; sourceTree = "<group>"; };
+		ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationInteractor.swift; sourceTree = "<group>"; };
+		ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProtocols.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +256,7 @@
 		8E71C16A23999EA90051C45E /* RIBs */ = {
 			isa = PBXGroup;
 			children = (
+				ACD89BA026C55C4D0007C140 /* Authorization  */,
 				8E73C8CD239C5B42000A7F8A /* Main */,
 				8EFD7C14239BF005002EBA60 /* Profile */,
 				8E73C8C0239C5ADE000A7F8A /* RootNavigation */,
@@ -378,6 +391,19 @@
 			path = CommonViews;
 			sourceTree = "<group>";
 		};
+		ACD89BA026C55C4D0007C140 /* Authorization  */ = {
+			isa = PBXGroup;
+			children = (
+				ACD89BA126C55C9B0007C140 /* AuthorizationRouter.swift */,
+				ACD89BA226C55C9B0007C140 /* AuthorizationViewController.storyboard */,
+				ACD89BA326C55C9B0007C140 /* AuthorizationViewController.swift */,
+				ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */,
+				ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */,
+				ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */,
+			);
+			path = "Authorization ";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -488,6 +514,7 @@
 				8E71C14723999E940051C45E /* LaunchScreen.storyboard in Resources */,
 				8E71C14423999E940051C45E /* Assets.xcassets in Resources */,
 				8E73C8A6239C45AE000A7F8A /* ContactFieldView.xib in Resources */,
+				ACD89BA726C55C9B0007C140 /* AuthorizationViewController.storyboard in Resources */,
 				8EFD7C2B239BF95B002EBA60 /* ProfileTableViewController.storyboard in Resources */,
 				8E73C8E5239C64D9000A7F8A /* MainScreenViewController.storyboard in Resources */,
 				8EFD7C0F239BF000002EBA60 /* ProfileStackViewController.storyboard in Resources */,
@@ -548,10 +575,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACD89BA826C55C9B0007C140 /* AuthorizationViewController.swift in Sources */,
 				8EFD7C10239BF000002EBA60 /* ProfileStackViewController.swift in Sources */,
 				8E71C13B23999E920051C45E /* AppDelegate.swift in Sources */,
 				8EFD7C4D239C22A4002EBA60 /* Observable+Extensions.swift in Sources */,
+				ACD89BA926C55C9B0007C140 /* AuthorizationBuilder.swift in Sources */,
 				8E73C8E8239C64D9000A7F8A /* MainScreenBuilder.swift in Sources */,
+				ACD89BAC26C55CBA0007C140 /* AuthorizationProtocols.swift in Sources */,
 				8EFD7C3B239C1680002EBA60 /* NibLoadable.swift in Sources */,
 				8E5925DD248130BA002623FB /* StateTransformTrait.swift in Sources */,
 				8EFD7C27239BF7D1002EBA60 /* StoryboardInstantiatable.swift in Sources */,
@@ -578,6 +608,7 @@
 				8E73C893239C4411000A7F8A /* TableViewRegisterable.swift in Sources */,
 				8EFD7C2D239BFB20002EBA60 /* RootDependency.swift in Sources */,
 				8EFD7C11239BF000002EBA60 /* ProfileProtocols.swift in Sources */,
+				ACD89BAA26C55C9B0007C140 /* AuthorizationInteractor.swift in Sources */,
 				8EFD7C3D239C16CB002EBA60 /* ErrorMessageView.swift in Sources */,
 				8E73C8E4239C64D9000A7F8A /* MainScreenRouter.swift in Sources */,
 				8E73C8CC239C5B01000A7F8A /* RootNavigationInteractor.swift in Sources */,
@@ -589,6 +620,7 @@
 				8E73C8CB239C5B01000A7F8A /* RootNavigationBuilder.swift in Sources */,
 				8E5925D924812D75002623FB /* Observable+LoadingIndicator.swift in Sources */,
 				8EFD7C12239BF000002EBA60 /* ProfileBuilder.swift in Sources */,
+				ACD89BA626C55C9B0007C140 /* AuthorizationRouter.swift in Sources */,
 				8EFD7C1A239BF0A1002EBA60 /* ProfileService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

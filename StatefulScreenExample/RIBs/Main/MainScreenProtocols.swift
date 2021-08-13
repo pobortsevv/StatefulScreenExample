@@ -28,7 +28,7 @@ protocol MainScreenViewControllable: ViewControllable {}
 
 protocol MainScreenRouting: ViewableRouting {
   func routeToStackViewProfile()
-  
+  func routeToAuthorization()
   func routeToTableViewProfile()
 }
 
@@ -37,4 +37,5 @@ protocol MainScreenRouting: ViewableRouting {
 struct MainScreenViewOutput {
   let stackViewButtonTap: ControlEvent<Void>
   let tableViewButtonTap: ControlEvent<Void>
+	let authorizationButtonTap: ControlEvent<Void>
 }
