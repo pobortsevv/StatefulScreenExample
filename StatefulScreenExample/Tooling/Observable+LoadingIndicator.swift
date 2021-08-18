@@ -53,3 +53,41 @@ public func refreshLoadingIndicatorEvents<State: GeneralizableState & LoadingInd
     
     return (initialLoadingIndicatorVisible, hideRefreshControl)
 }
+
+/// Тоже самое только без pull-to-refresh
+
+public func LoadingIndicatorEvent<State: GeneralizableState & LoadingIndicatableState>(state: Observable<State>)
+	-> Driver<Bool> {
+		let didLoadData = state
+			.map { state -> Void? in
+				switch state.isDataLoadedState {
+				case true: return Void()
+				case false: return nil
+				}
+		}
+		.compactMap()
+		
+		// initialLoadingIndicatorVisible (показ/сокрытие лоудера в центре экрана)
+		// Только при первой загрузке данных должен отображаться лоудер в центре экрана
+		let didLoadInitialData = didLoadData.take(prefix: 1)
+		
+		let isInitialDataLoaded = didLoadInitialData
+			.map { _ in true }
+			.startWith(false)
+		
+		let isLoading = state
+			.map { $0.shouldLoadingIndicatorBeVisible }
+		
+		let initialLoadingIndicatorVisible = Observable.combineLatest(isInitialDataLoaded, isLoading)
+			.map { isInitialDataLoaded, isLoading -> Bool in
+				if isInitialDataLoaded {
+					return false
+				} else {
+					return isLoading
+				}
+		}
+		.distinctUntilChanged() //.loaderVisibilityObservable()
+		.asDriverIgnoringError()
+		
+		return (initialLoadingIndicatorVisible)
+}

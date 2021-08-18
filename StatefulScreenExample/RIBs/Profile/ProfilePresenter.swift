@@ -59,10 +59,8 @@ extension ProfilePresenter {
         case .dataLoaded(let profile):
           let emailTitle: String = (profile.email == nil ? "Добавить e-mail" : "E-mail")
           
-          return ProfileViewModel(firstName: TitledText(title: "Имя", text: profile.firstName),
-                                  lastName: TitledText(title: "Фамилия", text: profile.lastName),
-                                  middleName: TitledOptionalText(title: "Отчество", maybeText: profile.middleName),
-                                  login: TitledText(title: "Никнейм", text: profile.login),
+          return ProfileViewModel(firstName: TitledOptionalText(title: "Имя", maybeText: profile.firstName),
+                                  lastName: TitledOptionalText(title: "Фамилия", maybeText: profile.lastName),
                                   email: TitledOptionalText(title: emailTitle, maybeText: profile.email),
                                   phone: TitledOptionalText(title: "Телефон", maybeText: profile.phone),
                                   myOrders: "Мои заказы")

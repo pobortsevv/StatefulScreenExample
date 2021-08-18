@@ -10,10 +10,8 @@ import Foundation
 
 /// Сервис имитирует асинхронную работу запросов на бэк
 final class ProfileServiceImp: ProfileService {
-  private var mokedProfile = Profile(firstName: "Дмитрий",
-                                     lastName: "Игнатьев",
-                                     middleName: nil,
-                                     login: "iDmitriy",
+  private var mokedProfile = Profile(firstName: nil,
+                                     lastName: nil,
                                      email: nil,
                                      phone: "+7(999)123-45-67")
   
@@ -37,12 +35,10 @@ final class ProfileServiceImp: ProfileService {
   }
   
   func updateEmail(_ newEmail: String, completion: @escaping (Result<Void, Error>) -> Void) {
-    mokedProfile = Profile(firstName: "Дмитрий",
-                           lastName: "Игнатьев",
-                           middleName: nil,
-                           login: "iDmitriy",
-                           email: newEmail,
-                           phone: "+7(999)123-45-67")
+    mokedProfile = Profile(firstName: nil,
+														lastName: nil,
+														email: nil,
+														phone: "+7(999)123-45-67")
     
     let delay = Double.random(in: 1...2)
     DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + delay) {

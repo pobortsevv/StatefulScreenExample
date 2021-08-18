@@ -67,11 +67,9 @@ protocol ProfileViewOutput {
 }
 
 struct ProfileViewModel: Equatable {
-  let firstName: TitledText
-  let lastName: TitledText
-  let middleName: TitledOptionalText
-  
-  let login: TitledText
+  let firstName: TitledOptionalText
+  let lastName: TitledOptionalText
+
   let email: TitledOptionalText
   let phone: TitledOptionalText
   

@@ -102,10 +102,8 @@ extension ProfileTableViewController: BindableView {
       }
 
       let rowItems: [RowItem] = [
-        .contactField(viewModel.firstName),
-        .contactField(viewModel.lastName),
-        .contactOptionalText(viewModel.middleName),
-        .contactField(viewModel.login),
+				.contactOptionalText(viewModel.firstName),
+				.contactOptionalText(viewModel.lastName),
         .contactOptionalText(viewModel.phone),
         emailItem,
         .myOrders(viewModel.myOrders)

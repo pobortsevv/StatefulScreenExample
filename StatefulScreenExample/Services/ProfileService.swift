@@ -13,13 +13,10 @@ protocol ProfileService: AnyObject {
 }
 
 struct Profile {
-  let firstName: String
-  let lastName: String
-  let middleName: String?
-  
-  let login: String
-  let email: String?
-  let phone: String?
+	var firstName: String?
+	var lastName: String?
+	var email: String?
+	let phone: String
 }
 
 extension Profile: Decodable {}

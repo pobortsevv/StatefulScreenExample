@@ -10,4 +10,5 @@ import RIBs
 
 protocol RootDependency: Dependency {
   var profileService: ProfileService { get }
+	var profileProvider: ProfileProviderImp { get }
 }

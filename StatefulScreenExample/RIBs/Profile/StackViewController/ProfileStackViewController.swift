@@ -18,8 +18,6 @@ final class ProfileStackViewController: UIViewController, ProfileViewControllabl
   
   private let firstNameView = ContactFieldView.loadFromNib()
   private let lastNameView = ContactFieldView.loadFromNib()
-  private let middleNameView = ContactFieldView.loadFromNib()
-  private let loginView = ContactFieldView.loadFromNib()
   private let phoneView = ContactFieldView.loadFromNib()
   
   private let emailView = ContactFieldView.loadFromNib()
@@ -57,8 +55,6 @@ extension ProfileStackViewController {
     stackView.addArrangedSubviews([
       firstNameView,
       lastNameView,
-      middleNameView,
-      loginView,
       phoneView,
       emailView,
       addEmailView,
@@ -123,19 +119,11 @@ extension ProfileStackViewController: BindableView {
   
   private func bindViewModel(_ profileViewModel: Driver<ProfileViewModel>) {
     profileViewModel.map { $0.firstName }.drive(onNext: { [unowned self] viewModel in
-      self.firstNameView.setTitle(viewModel.title, text: viewModel.text)
+      self.firstNameView.setTitle(viewModel.title, text: viewModel.maybeText)
     }).disposed(by: disposeBag)
     
     profileViewModel.map { $0.lastName }.drive(onNext: { [unowned self] viewModel in
-      self.lastNameView.setTitle(viewModel.title, text: viewModel.text)
-    }).disposed(by: disposeBag)
-    
-    profileViewModel.map { $0.middleName }.drive(onNext: { [unowned self] viewModel in
-      self.middleNameView.setTitle(viewModel.title, text: viewModel.maybeText)
-    }).disposed(by: disposeBag)
-    
-    profileViewModel.map { $0.login }.drive(onNext: { [unowned self] viewModel in
-      self.loginView.setTitle(viewModel.title, text: viewModel.text)
+      self.lastNameView.setTitle(viewModel.title, text: viewModel.maybeText)
     }).disposed(by: disposeBag)
     
     profileViewModel.map { $0.phone }.drive(onNext: { [unowned self] viewModel in
