@@ -12,7 +12,8 @@ final class AuthorizationBuilder: Builder<RootDependency>, AuthorizationBuildabl
 	func build() -> AuthorizationRouting {
 		let viewController = AuthorizationViewController.instantiateFromStoryboard()
 		let presenter = AuthorizationPresenter()
-		let interactor = AuthorizationInteractor(presenter: presenter, authorizationProvider: dependency.profileProvider)
+		let interactor = AuthorizationInteractor(presenter: presenter,
+																						 authorizationProvider: dependency.profileProvider)
 		
 		// После верстки
 		VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)

@@ -45,7 +45,7 @@ extension AuthorizationPresenter: IOTransformer {
 		}
 		.asSignal(onErrorJustReturn: nil)
 		
-		return AuthorizationPresenterOutput(viewModel: viewModel,
+		return AuthorizationPresenterOutput(showCode: viewModel,
 																				isContentViewVisible: isContentViewVisible,
 																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
 																				phoneNumber: input.refinedPhone.asDriverIgnoringError(),
@@ -55,11 +55,11 @@ extension AuthorizationPresenter: IOTransformer {
 
 extension AuthorizationPresenter {
 	private enum Helper: Namespace {
-		static func viewModel(_ state: Observable<AuthorizationInteractorState>) -> Driver<AuthorizationViewModel> {
-			return state.compactMap { state -> AuthorizationViewModel? in
+		static func viewModel(_ state: Observable<AuthorizationInteractorState>) -> Driver<String> {
+			return state.compactMap { state -> String? in
 				switch state {
-				case .routedToCodeCheck:
-					return AuthorizationViewModel()
+				case let .routedToCodeCheck(code):
+					return code
 				case .smsCodeRequestError, .sendingSMSCodeRequest, .userInput:
 					return nil
 				}

@@ -12,7 +12,7 @@ final class AppComponent: Component<EmptyDependency>, RootDependency {
 	let profileProvider: ProfileProviderImp = ProfileProviderImp()
 	
   let profileService: ProfileService = ProfileServiceImp()
-  
+	
   init() {
     super.init(dependency: EmptyComponent())
   }

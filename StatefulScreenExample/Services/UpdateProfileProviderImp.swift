@@ -23,20 +23,22 @@ final class ProfileProviderImp: UpdateProfileProvider, AuthorizationProfileProvi
 			self?.profile = profile
 		}
 		completion(result)
+
 		}
 	}
 	
-	func checkNumber(_ number: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func checkNumber(_ number: String?, completion: @escaping (Result<String, Error>) -> Void) {
 		DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + .random(in: 0.5...2)) {
 			let isSuccess = Bool.random()
-			let result: Result<Void, Error>
+			let result: Result<String, Error>
 			switch isSuccess {
 			case false:
 				result = .failure(NetworkError())
 			case true:
-				result = .success(Void())
+				result = .success("".randomCode())
 			}
 		completion(result)
+			print(result)
 		}
 	}
 }

@@ -7,5 +7,5 @@
 //
 
 protocol AuthorizationProfileProvider: AnyObject {
-	func checkNumber(_ number: String?, completion: @escaping (Result<Void, Error>) -> Void)
+	func checkNumber(_ number: String?, completion: @escaping (Result<String, Error>) -> Void)
 }

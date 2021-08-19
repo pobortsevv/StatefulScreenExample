@@ -44,7 +44,7 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 	private func recieveSMS(number: String?) {
 		authorizationProvider.checkNumber(number) { [weak self] result in
 			switch result {
-			case .success(let signal): self?.responses.$didRecieveSMS.accept(signal)
+			case .success(let code): self?.responses.$didRecieveSMS.accept(code)
 			case .failure(let error): self?.responses.$authorizationError.accept(error)
 			}
 		}
@@ -58,11 +58,18 @@ extension AuthorizationInteractor: IOTransformer {
 		let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
 		
 		let refinedPhone = viewOutput.phoneNumberTextChange
-			.startWith("")
+			.startWith("+7")
+			
 			.map { phoneNumber in
 				phoneNumber.removingCharacters(except: .arabicNumerals)
 			}
 			.distinctUntilChanged()
+		
+		viewOutput.getSMSButtonTap
+			.subscribe(onNext: { [weak self] in
+				
+			})
+			.disposed(by: disposeBag)
 		
 		let requests = makeRequests()
 		
@@ -87,11 +94,6 @@ extension AuthorizationInteractor {
 		static let bySendingSMSCodeRequestState: (State) -> String? = { state in
 			guard case .sendingSMSCodeRequest(let phoneNumber) = state else { return nil }; return phoneNumber
 		}
-		
-		/// case .gotSMSCode
-//		static let byGotSMSCode: (State) -> Bool = { state -> Bool in
-//			guard case .gotSMSCode = state else {return false}; return true
-//		}
 	
 		static func transform(trait: StateTransformTrait<State>,
 													viewOutput: AuthorizationViewOutput,
@@ -106,11 +108,9 @@ extension AuthorizationInteractor {
 					.map { phoneNumber in State.sendingSMSCodeRequest(phoneNumber: phoneNumber)}
 				
 				// sendingSMSCodeRequest -> responseError
-				responses.authorizationError
+				responses.authorizationError // filterMap позволяет проверить из правильного ли мы состояния переключаемся
 					.filteredByState(trait.readOnlyState, filterMap: bySendingSMSCodeRequestState)
 					.map { error, phoneNumber in State.smsCodeRequestError(error: error, phoneNumber: phoneNumber) }
-	//				.filteredByState(trait.readOnlyState, filter: bySendingSMSCodeRequestState)
-	//				.map { error in State.responseError(error) }
 				
 				// responseError -> userInput
 				viewOutput.retryButtonTap.filteredByState(trait.readOnlyState, filterMap: { state -> String? in
@@ -121,7 +121,7 @@ extension AuthorizationInteractor {
 				
 				// sendingSMSCodeRequest -> gotSMSCode
 				responses.didRecieveSMS.filteredByState(trait.readOnlyState, compactMapAsFilter: bySendingSMSCodeRequestState)
-					.map { _ in State.routedToCodeCheck }
+					.map { smsCode in State.routedToCodeCheck(code: smsCode) }
 			}.bindToAndDisposedBy(trait: trait)
 		}
 	}
@@ -134,13 +134,15 @@ extension AuthorizationInteractor {
 	private func makeRequests() -> Requests {
 		Requests(recieveSMS: { [weak self] phoneNumber in self?.recieveSMS(number: phoneNumber) })
 	}
+	
+	
 }
 
 // MARK: - Nested Types
 
 extension AuthorizationInteractor {
 	private struct Responses {
-		@PublishObservable var didRecieveSMS: Observable<Void>
+		@PublishObservable var didRecieveSMS: Observable<String>
 		@PublishObservable var authorizationError: Observable<Error>
 	}
 	
@@ -167,5 +169,20 @@ extension String {
 	public func removingCharacters(in characterSet: CharacterSet) -> String {
 		let scalars = unicodeScalars.filter { !characterSet.contains($0) }
 		return String(scalars)
+	}
+	
+	public func compareLenght(with len: Int) -> String {
+		if (self.count > len) {
+			return String(self.prefix(len))
+		}
+		return self
+	}
+	
+	/// Функция генерации  sms кода
+	public func randomCode() -> String {
+		let len = 4
+		let codeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+		let code = String((0..<len).compactMap{ _ in codeChars.randomElement() })
+		return code
 	}
 }

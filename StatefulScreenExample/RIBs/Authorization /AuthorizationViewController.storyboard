@@ -53,7 +53,7 @@
                                 </state>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Будем звонить только, если не дойдут уведомления или смс" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wp2-sg-9Bu">
-                                <rect key="frame" x="54" y="244" width="304" height="31.5"/>
+                                <rect key="frame" x="54" y="244" width="304" height="36"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="36" id="BFW-0P-W9g"/>
                                     <constraint firstAttribute="width" constant="304" id="aeo-pp-tMi"/>

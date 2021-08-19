@@ -44,7 +44,7 @@ public enum AuthorizationInteractorState {
 //	case gotSMSCode(smsCode: String)
 	case smsCodeRequestError(error: Error, phoneNumber: String)
 	/// Перешли на экран ввода и проверки смс кода (терминальное состояние)
-	case routedToCodeCheck
+	case routedToCodeCheck(code: String)
 }
 
 struct AuthorizationInteractorOutput {
@@ -54,7 +54,7 @@ struct AuthorizationInteractorOutput {
 
 /// Здесь описаны состояния загрузки экрана, при входе на него
 struct AuthorizationPresenterOutput {
-	let viewModel: Driver<AuthorizationViewModel>
+	let showCode: Driver<String>
 	let isContentViewVisible: Driver<Bool>
 	
 	let initialLoadingIndicatorVisible: Driver<Bool>
@@ -67,10 +67,6 @@ protocol AuthorizationViewOutput {
 	var getSMSButtonTap: ControlEvent<Void> {get}
 	var phoneNumberTextChange: ControlEvent<String> {get}
 	var retryButtonTap: ControlEvent<Void> {get}
-}
-
-struct AuthorizationViewModel: Equatable {
-	//let phone: String?
 }
 
 extension AuthorizationInteractorState: GeneralizableState {
