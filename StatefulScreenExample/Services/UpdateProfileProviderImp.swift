@@ -35,7 +35,7 @@ final class ProfileProviderImp: UpdateProfileProvider, AuthorizationProfileProvi
 			case false:
 				result = .failure(NetworkError())
 			case true:
-				result = .success("".randomCode())
+				result = .success(String.randomCode())
 			}
 		completion(result)
 			print(result)

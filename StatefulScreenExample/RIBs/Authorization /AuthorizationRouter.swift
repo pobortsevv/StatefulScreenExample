@@ -12,20 +12,24 @@ import RxSwift
 
 final class AuthorizationRouter: ViewableRouter<AuthorizationInteractable, AuthorizationViewControllable>, AuthorizationRouting {
 
-	//	private let Билдер след экрана
+	private let validatorBuilder: ValidatorBuildable
+	
 	private let disposeBag = DisposeBag()
 	
 	// TODO: Добавить buildable в аргументы для следующего экрана
-	override init(interactor: AuthorizationInteractable, viewController: AuthorizationViewControllable) {
+	init(interactor: AuthorizationInteractable,
+								viewController: AuthorizationViewControllable,
+								validatorBuilder: ValidatorBuildable) {
+		self.validatorBuilder = validatorBuilder
 		super.init(interactor: interactor, viewController: viewController)
 		interactor.router = self
 	}
 	
-	func routeToCheckSMSCode() {
-		// let router = checkSMSCode.build()
-//		attachChild(router)
-		//viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController,
-		 //animated: true)
-		// detachWhenClosed(child: router, disposedBy: disposeBag)
+	func routeToValidator(phoneNumber: String) {
+		let router = validatorBuilder.build()
+		attachChild(router)
+		viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController, animated: true)
+		
+		detachWhenClosed(child: router, disposedBy: disposeBag)
 	}
 }

@@ -16,12 +16,13 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 	weak var router: AuthorizationRouting?
 	
 	private let authorizationProvider: AuthorizationProfileProvider
-//	private var phoneNumber: String?
 	
 	// MARK: Internals
 	
 	// Задаем начальное состояние для нашего экрана
 	private let _state = BehaviorRelay<AuthorizationInteractorState>(value: .userInput)
+	
+	private let _screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>
 	
 	private let responses = Responses()
 	
@@ -30,15 +31,12 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 	init(presenter: AuthorizationPresentable,
 			 authorizationProvider: AuthorizationProfileProvider) {
 		self.authorizationProvider = authorizationProvider
+		_screenDataModel = BehaviorRelay(value: AuthorizationScreenDataModel())
 		super.init(presenter: presenter)
 	}
 	
 	override func didBecomeActive() {
 		super.didBecomeActive()
-		
-		/// Использовать данную функцию только при нажатии пользователем кнопки
-		/// "Получить смс"
-		//recieveSMS()
 	}
 
 	private func recieveSMS(number: String?) {
@@ -58,27 +56,30 @@ extension AuthorizationInteractor: IOTransformer {
 		let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
 		
 		let refinedPhone = viewOutput.phoneNumberTextChange
-			.startWith("+7")
-			
-			.map { phoneNumber in
-				phoneNumber.removingCharacters(except: .arabicNumerals)
-			}
-			.distinctUntilChanged()
-		
-		viewOutput.getSMSButtonTap
-			.subscribe(onNext: { [weak self] in
+			.map { phoneNumber -> String in
+				let _phoneNumber = phoneNumber
+					.removingCharacters(except: .arabicNumerals)
+					.prefix(11)
 				
-			})
-			.disposed(by: disposeBag)
+				return String(_phoneNumber)
+			}
 		
 		let requests = makeRequests()
+		let routes = makeRoutes()
 		
-		StateTransform.transform(trait: trait, viewOutput: viewOutput, phoneNumber: refinedPhone, responses: responses, requests: requests)
+		StateTransform.transform(trait: trait,
+														 viewOutput: viewOutput,
+														 phoneNumber: refinedPhone,
+														 responses: responses,
+														 requests: requests,
+														 routes: routes,
+														 screenDataModel: _screenDataModel,
+														 disposeBag: disposeBag)
 		
-		return AuthorizationInteractorOutput(state: trait.readOnlyState, refinedPhone: refinedPhone)
+		return AuthorizationInteractorOutput(state: trait.readOnlyState,
+																				 screenDataModel: _screenDataModel.asObservable())
 	}
 }
-
 
 extension AuthorizationInteractor {
 	private typealias State = AuthorizationInteractorState
@@ -99,7 +100,10 @@ extension AuthorizationInteractor {
 													viewOutput: AuthorizationViewOutput,
 													phoneNumber: Observable<String>,
 													responses: Responses,
-													requests: Requests) {
+													requests: Requests,
+													routes: Routes,
+													screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>,
+													disposeBag: DisposeBag) {
 			StateTransform.transitions {
 				// userInput -> sendingSMSCodeRequest
 				viewOutput.getSMSButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
@@ -120,13 +124,35 @@ extension AuthorizationInteractor {
 				.map { phoneNumber in State.sendingSMSCodeRequest(phoneNumber: phoneNumber) }
 				
 				// sendingSMSCodeRequest -> gotSMSCode
-				responses.didRecieveSMS.filteredByState(trait.readOnlyState, compactMapAsFilter: bySendingSMSCodeRequestState)
-					.map { smsCode in State.routedToCodeCheck(code: smsCode) }
+				responses.didRecieveSMS.filteredByState(trait.readOnlyState) { state in
+					guard case .sendingSMSCodeRequest = state else { return false } ; return true
+				}
+				.observe(on: MainScheduler.instance)
+				.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
+				.do(afterNext: { _, text in
+					let formattedPhone = formatPhone(number: text.phoneNumberTextField)
+					routes.routeToValidator(formattedPhone)
+				})
+				.map { code, _ in State.routedToCodeCheck(code: code) }
 			}.bindToAndDisposedBy(trait: trait)
+		
+			updateScreenDataModel(screenDataModel: screenDataModel, phoneNumberText: phoneNumber, disposeBag: disposeBag)
+		}
+		
+		static func updateScreenDataModel(screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>,
+																			phoneNumberText: Observable<String>,
+																			disposeBag: DisposeBag) {
+			let readOnlyScreenDataModel = screenDataModel.asObservable()
+			
+			phoneNumberText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
+				.map { phoneNumberText, screenDataModel in
+					mutate(value: screenDataModel, mutation: { $0.phoneNumberTextField = phoneNumberText })
+				}
+				.bind(to: screenDataModel)
+				.disposed(by: disposeBag)
 		}
 	}
 }
-
 
 // MARK: - Help Methods
 
@@ -135,7 +161,9 @@ extension AuthorizationInteractor {
 		Requests(recieveSMS: { [weak self] phoneNumber in self?.recieveSMS(number: phoneNumber) })
 	}
 	
-	
+	private func makeRoutes() -> Routes {
+		Routes(routeToValidator: { [weak self] formattedPhoneNumber in self?.router?.routeToValidator(phoneNumber: formattedPhoneNumber) })
+	}
 }
 
 // MARK: - Nested Types
@@ -148,7 +176,10 @@ extension AuthorizationInteractor {
 	
 	private struct Requests {
 		let recieveSMS: (_ phoneNumer: String) -> Void
-//		let recieveInput: VoidClosure
+	}
+	
+	private struct Routes {
+		let routeToValidator: (_ phoneNumber: String) -> Void
 	}
 }
 
@@ -179,9 +210,9 @@ extension String {
 	}
 	
 	/// Функция генерации  sms кода
-	public func randomCode() -> String {
-		let len = 4
-		let codeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	public static func randomCode() -> String {
+		let len = 5
+		let codeChars = "0123456789"
 		let code = String((0..<len).compactMap{ _ in codeChars.randomElement() })
 		return code
 	}

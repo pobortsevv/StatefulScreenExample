@@ -18,7 +18,8 @@ final class AuthorizationBuilder: Builder<RootDependency>, AuthorizationBuildabl
 		// После верстки
 		VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
 	
-		return AuthorizationRouter(interactor: interactor, viewController: viewController)
-		// TODO: Дополнить builder-ом следующего экрана
+		return AuthorizationRouter(interactor: interactor,
+															 viewController: viewController,
+															 validatorBuilder: ValidatorBuilder(dependency: dependency))
 	}
 }

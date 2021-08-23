@@ -22,17 +22,14 @@ extension AuthorizationPresenter: IOTransformer {
 		
 		let isContentViewVisible = state.compactMap { state -> Void? in
 			switch state {
-			case .routedToCodeCheck: return Void()
+			case .routedToCodeCheck: return Void()//routeToValidator()
 			case .userInput, .smsCodeRequestError, .sendingSMSCodeRequest: return nil
 			}
 		}
-		.map{true}
+		.map { true }
 		.startWith(false)
 		.asDriverIgnoringError()
 		
-		// TODO: Следует задать вопрос: Что это и зачем оно нада?
-		// Пока по этому аспекту нет инфы мы будем использовать dataLoaded
-		// вместо isTyping
 		let initialLoadingIndicatorVisible = LoadingIndicatorEvent(state: state)
 		
 		let showError = state.map { state -> ErrorMessageViewModel? in
@@ -43,12 +40,23 @@ extension AuthorizationPresenter: IOTransformer {
 				return nil
 			}
 		}
-		.asSignal(onErrorJustReturn: nil)
+		.asSignalIgnoringError()
+		
+		let phoneNumber = input.screenDataModel.map { screenDataModel -> String in
+			return formatPhone(number: screenDataModel.phoneNumberTextField)
+		}
+		.asDriverIgnoringError()
+		
+		let buttonAvailability = input.screenDataModel.map { screenDataModel -> Bool in
+			return screenDataModel.phoneNumberTextField.count == 11
+		}
+		.asDriverIgnoringError()
 		
 		return AuthorizationPresenterOutput(showCode: viewModel,
 																				isContentViewVisible: isContentViewVisible,
 																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
-																				phoneNumber: input.refinedPhone.asDriverIgnoringError(),
+																				phoneNumber: phoneNumber,
+																				isButtonEnable: buttonAvailability,
 																				showError: showError)
 	}
 }

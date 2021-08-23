@@ -13,7 +13,7 @@ import UIKit
 import NotificationCenter
 
 final class AuthorizationViewController: UIViewController, AuthorizationViewControllable {
-	@IBOutlet private weak var phoneNumberTextField: UITextField!
+	@IBOutlet private weak var phoneNumberTextField: PhoneNumberTextField!
 	@IBOutlet private weak var getSMSButton: UIButton!
 	
 	// Notification
@@ -26,15 +26,14 @@ final class AuthorizationViewController: UIViewController, AuthorizationViewCont
 	// MARK: View Events
 	
 	private let viewOutput = ViewOutput()
-	
 	private let disposeBag = DisposeBag()
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		initialSetup()
 	}
 }
-	
+
 extension AuthorizationViewController {
 	private func initialSetup() {
 		title = "Авторизация"
@@ -43,17 +42,8 @@ extension AuthorizationViewController {
 		}
 		notificationCenter.delegate = self
 		
-		getSMSButton.layer.cornerRadius = 12.0
-		
-		phoneNumberTextField.layer.cornerRadius = 12.0
-		phoneNumberTextField.rx.text.subscribe(onNext: { _ in
-			if let text = self.phoneNumberTextField.text {
-				self.phoneNumberTextField.text = String(text.prefix(10))
-			}
-			self.getSMSButton.isHighlighted = self.phoneNumberTextField.text?.count != 10
-			self.getSMSButton.isEnabled = self.phoneNumberTextField.text?.count == 10
-			self.getSMSButton.alpha = self.getSMSButton.isEnabled ? 1 : 0.3
-		}).disposed(by: disposeBag)
+		getSMSButton.layer.cornerRadius = 12
+		phoneNumberTextField.layer.cornerRadius = 12
 		
 		view.addStretchedToBounds(subview: errorMessageView)
 		view.addStretchedToBounds(subview: loadingIndicatorView)
@@ -63,51 +53,55 @@ extension AuthorizationViewController {
 	}
 	
 	private func tapGestureInitialSetup() {
-		do {
-			let tapGesture = UITapGestureRecognizer()
-			getSMSButton.addGestureRecognizer(tapGesture)
-			tapGesture.rx.event.mapAsVoid().bind(to: viewOutput.$getSMSButtonTap).disposed(by: disposeBag)
-		}
+		let toolbar = UIToolbar()
+		
+		let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(doneButtonTapped))
+		
+		toolbar.setItems([flexSpace, doneButton], animated: true)
+		toolbar.sizeToFit()
+		
+		phoneNumberTextField.inputAccessoryView = toolbar
 	}
 }
 
-
 extension AuthorizationViewController: BindableView {
-	func getOutput() -> AuthorizationViewOutput {
-		//let phoneNumberTextField =
-		return viewOutput
-	}
+	func getOutput() -> AuthorizationViewOutput { viewOutput }
 	
 	func bindWith(_ input: AuthorizationPresenterOutput) {
 		disposeBag.insert {
-			input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.rx.isVisible)
-			
-			input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.indicatorView.rx.isAnimating)
-			
-			phoneNumberTextField.rx.text.orEmpty.bind(to: viewOutput.$phoneNumberTextChange)
+			input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.rx.isVisible,
+																								 loadingIndicatorView.indicatorView.rx.isAnimating)
 			
 			input.phoneNumber.drive(phoneNumberTextField.rx.text)
 			
-			input.showCode.drive(onNext: { [unowned self] smsCode in
-				sendNotification(code: smsCode)
+			input.isButtonEnable.do(onNext: { [weak getSMSButton] isEnabled in
+				getSMSButton?.alpha = isEnabled ? 1 : 0.3
+			}).drive(getSMSButton.rx.isEnabled)
+			
+			input.showCode.drive(onNext: { [weak self] smsCode in
+				self?.sendNotification(code: smsCode)
 				UIPasteboard.general.string = smsCode
 			})
-		}
+			
+			input.showError.emit(onNext: { [unowned self] maybeViewModel in
+				self.errorMessageView.isVisible = (maybeViewModel != nil)
 		
-		input.showError.emit(onNext: { [unowned self] maybeViewModel in
-			self.errorMessageView.isVisible = (maybeViewModel != nil)
-	
-			if let viewModel = maybeViewModel {
-				self.errorMessageView.resetToEmptyState()
+				if let viewModel = maybeViewModel {
+					self.errorMessageView.resetToEmptyState()
 
-				self.errorMessageView.setTitle(viewModel.title, buttonTitle: viewModel.buttonTitle, action: {
-					self.viewOutput.$retryButtonTap.accept(Void())
-				})
-			}
-		}).disposed(by: disposeBag)
+					self.errorMessageView.setTitle(viewModel.title, buttonTitle: viewModel.buttonTitle, action: {
+						self.viewOutput.$retryButtonTap.accept(Void())
+					})
+				}
+			})
+			
+			getSMSButton.rx.tap.bind(to: viewOutput.$getSMSButtonTap)
+			
+			phoneNumberTextField.rx.text.orEmpty.bind(to: viewOutput.$phoneNumberTextChange)
+		}
 	}
 }
-
 
 // MARK: - RibStoryboardInstantiatable
 
@@ -126,9 +120,10 @@ extension AuthorizationViewController {
 // MARK: - Notifications Methods
 
 extension AuthorizationViewController: UNUserNotificationCenterDelegate {
-	
 	/// Получаю уведомление, когда приложение открыто
-	func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+	func userNotificationCenter(_ center: UNUserNotificationCenter,
+															willPresent notification: UNNotification,
+															withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 		completionHandler([.alert, .sound])
 	}
 	
@@ -150,5 +145,13 @@ extension AuthorizationViewController: UNUserNotificationCenterDelegate {
 		let request = UNNotificationRequest(identifier: "sms code", content: content, trigger: trigger)
 		
 		notificationCenter.add(request)
+	}
+}
+
+// MARK: - Help Method
+
+extension AuthorizationViewController {
+	@objc func doneButtonTapped() {
+		view.endEditing(true)
 	}
 }

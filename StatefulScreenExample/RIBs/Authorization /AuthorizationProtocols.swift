@@ -27,13 +27,12 @@ protocol AuthorizationViewControllable: ViewControllable {}
 // MARK: - Interactor
 
 protocol AuthorizationRouting: ViewableRouting {
-		// TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
-	// routesToNextScreens!!!
+	func routeToValidator(phoneNumber: String)
 }
 
 protocol AuthorizationPresentable: Presentable {}
 
-// MARK: Outputs
+// MARK: States
 
 /// В данном перечислении находятся сами состояния.
 /// Необходимо объявить их здесь, реализовать переходы
@@ -41,32 +40,9 @@ protocol AuthorizationPresentable: Presentable {}
 public enum AuthorizationInteractorState {
 	case userInput
 	case sendingSMSCodeRequest(phoneNumber: String)
-//	case gotSMSCode(smsCode: String)
 	case smsCodeRequestError(error: Error, phoneNumber: String)
 	/// Перешли на экран ввода и проверки смс кода (терминальное состояние)
 	case routedToCodeCheck(code: String)
-}
-
-struct AuthorizationInteractorOutput {
-	let state: Observable<AuthorizationInteractorState>
-	let refinedPhone: Observable<String>
-}
-
-/// Здесь описаны состояния загрузки экрана, при входе на него
-struct AuthorizationPresenterOutput {
-	let showCode: Driver<String>
-	let isContentViewVisible: Driver<Bool>
-	
-	let initialLoadingIndicatorVisible: Driver<Bool>
-	
-	let phoneNumber: Driver<String>
-	let showError: Signal<ErrorMessageViewModel?>
-}
-
-protocol AuthorizationViewOutput {
-	var getSMSButtonTap: ControlEvent<Void> {get}
-	var phoneNumberTextChange: ControlEvent<String> {get}
-	var retryButtonTap: ControlEvent<Void> {get}
 }
 
 extension AuthorizationInteractorState: GeneralizableState {
@@ -81,7 +57,7 @@ extension AuthorizationInteractorState: GeneralizableState {
 	}
 	
 	public var isLoadingErrorState: Bool {
-		guard case .sendingSMSCodeRequest = self else { return false }
+		guard case .smsCodeRequestError = self else { return false }
 		return true
 	}
 }
@@ -90,5 +66,41 @@ extension AuthorizationInteractorState: LoadingIndicatableState {
 	public var shouldLoadingIndicatorBeVisible: Bool {
 		guard case .sendingSMSCodeRequest = self else { return false }
 		return true
+	}
+}
+
+// MARK: Outputs
+
+struct AuthorizationInteractorOutput {
+	let state: Observable<AuthorizationInteractorState>
+	let screenDataModel: Observable<AuthorizationScreenDataModel>
+}
+
+struct AuthorizationPresenterOutput {
+	let showCode: Driver<String>
+	let isContentViewVisible: Driver<Bool>
+	
+	let initialLoadingIndicatorVisible: Driver<Bool>
+	
+	let phoneNumber: Driver<String>
+	let	isButtonEnable: Driver<Bool>
+	let showError: Signal<ErrorMessageViewModel?>
+}
+
+protocol AuthorizationViewOutput {
+	var getSMSButtonTap: ControlEvent<Void> { get }
+	var phoneNumberTextChange: ControlEvent<String> { get }
+	var retryButtonTap: ControlEvent<Void> { get }
+}
+
+// MARK: ScreenDataModel
+
+struct AuthorizationScreenDataModel {
+	var phoneNumberTextField: String
+}
+
+extension AuthorizationScreenDataModel {
+	init() {
+		phoneNumberTextField = ""
 	}
 }

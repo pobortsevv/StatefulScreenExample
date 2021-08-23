@@ -6,4 +6,20 @@
 //  Copyright © 2021 IgnatyevProd. All rights reserved.
 //
 
-import Foundation
+import  UIKit
+
+final class PhoneNumberTextField: UITextField {
+	override func textRect(forBounds bounds: CGRect) -> CGRect {
+		textFieldRect(forBounds: bounds)
+	}
+	
+	override func editingRect(forBounds bounds: CGRect) -> CGRect {
+		textFieldRect(forBounds: bounds)
+	}
+	
+	private func textFieldRect(forBounds bounds: CGRect) -> CGRect {
+		let width = bounds.width - 16 - 16
+		
+		return CGRect(x: 16, y: 0, width: width, height: bounds.height)
+	}
+}

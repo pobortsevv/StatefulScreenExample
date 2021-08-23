@@ -60,3 +60,36 @@ public func configured<T: AnyObject>(object: T, closure: (_ object: T) -> Void) 
   closure(object)
   return object
 }
+
+/// Для изменения
+public func mutate<T>(value: T, mutation: (inout T) throws -> Void) rethrows -> T {
+	var mutableValue = value
+	try mutation(&mutableValue)
+	return mutableValue
+}
+
+public func formatPhone(number: String) -> String {
+	var formatedNumber = number
+	
+	// Добавление постоянной +7 в строку
+	formatedNumber.count != 0 ? nil : formatedNumber.insert(contentsOf: "7", at: formatedNumber.startIndex)
+	formatedNumber.contains("+") ? nil : formatedNumber.insert(contentsOf: "+", at: formatedNumber.startIndex)
+	
+	// Добавление пробелов между цифрами
+	switch formatedNumber.count {
+	case 11...:
+		formatedNumber.insert(contentsOf: " ", at: formatedNumber.index(formatedNumber.startIndex, offsetBy: 10))
+			fallthrough
+	case 9...:
+		formatedNumber.insert(contentsOf: " ", at: formatedNumber.index(formatedNumber.startIndex, offsetBy: 8))
+			fallthrough
+	case 6...:
+		formatedNumber.insert(contentsOf: " ", at: formatedNumber.index(formatedNumber.startIndex, offsetBy: 5))
+			fallthrough
+	case 3...:
+		formatedNumber.insert(contentsOf: " ", at: formatedNumber.index(formatedNumber.startIndex, offsetBy: 2))
+	default:
+		break
+	}
+	return formatedNumber
+}

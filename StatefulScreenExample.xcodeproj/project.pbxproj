@@ -65,6 +65,13 @@
 		8EFD7C3D239C16CB002EBA60 /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C3C239C16CB002EBA60 /* ErrorMessageView.swift */; };
 		8EFD7C42239C1A04002EBA60 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C41239C1A04002EBA60 /* UIView+Extensions.swift */; };
 		8EFD7C4D239C22A4002EBA60 /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */; };
+		AC27F66D26D3BFB2007614AC /* ValidatorRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F66826D3BFB2007614AC /* ValidatorRouter.swift */; };
+		AC27F66E26D3BFB2007614AC /* ValidatorViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC27F66926D3BFB2007614AC /* ValidatorViewController.storyboard */; };
+		AC27F66F26D3BFB2007614AC /* ValidatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F66A26D3BFB2007614AC /* ValidatorViewController.swift */; };
+		AC27F67026D3BFB2007614AC /* ValidatorBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F66B26D3BFB2007614AC /* ValidatorBuilder.swift */; };
+		AC27F67126D3BFB2007614AC /* ValidatorInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F66C26D3BFB2007614AC /* ValidatorInteractor.swift */; };
+		AC27F67326D3C020007614AC /* ValidatorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F67226D3C020007614AC /* ValidatorProtocols.swift */; };
+		AC27F67626D3C04B007614AC /* ValidatorPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC27F67526D3C04B007614AC /* ValidatorPresenter.swift */; };
 		AC2C5A7F26CC029800110BFB /* AuthorizationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2C5A7E26CC029800110BFB /* AuthorizationProvider.swift */; };
 		AC6A6D3026C66BFE004C7DC9 /* UpdateProfileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6A6D2F26C66BFE004C7DC9 /* UpdateProfileProvider.swift */; };
 		AC6A6D3226C66CEB004C7DC9 /* UpdateProfileProviderImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6A6D3126C66CEB004C7DC9 /* UpdateProfileProviderImp.swift */; };
@@ -75,6 +82,7 @@
 		ACD89BA926C55C9B0007C140 /* AuthorizationBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */; };
 		ACD89BAA26C55C9B0007C140 /* AuthorizationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */; };
 		ACD89BAC26C55CBA0007C140 /* AuthorizationProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */; };
+		ACEA26E126D0017300A3A7F0 /* PhoneNumberTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +170,13 @@
 		8EFD7C3C239C16CB002EBA60 /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
 		8EFD7C41239C1A04002EBA60 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
+		AC27F66826D3BFB2007614AC /* ValidatorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorRouter.swift; sourceTree = "<group>"; };
+		AC27F66926D3BFB2007614AC /* ValidatorViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorViewController.storyboard; sourceTree = "<group>"; };
+		AC27F66A26D3BFB2007614AC /* ValidatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorViewController.swift; sourceTree = "<group>"; };
+		AC27F66B26D3BFB2007614AC /* ValidatorBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorBuilder.swift; sourceTree = "<group>"; };
+		AC27F66C26D3BFB2007614AC /* ValidatorInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorInteractor.swift; sourceTree = "<group>"; };
+		AC27F67226D3C020007614AC /* ValidatorProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorProtocols.swift; sourceTree = "<group>"; };
+		AC27F67526D3C04B007614AC /* ValidatorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorPresenter.swift; sourceTree = "<group>"; };
 		AC2C5A7E26CC029800110BFB /* AuthorizationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProvider.swift; sourceTree = "<group>"; };
 		AC6A6D2F26C66BFE004C7DC9 /* UpdateProfileProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateProfileProvider.swift; sourceTree = "<group>"; };
 		AC6A6D3126C66CEB004C7DC9 /* UpdateProfileProviderImp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateProfileProviderImp.swift; sourceTree = "<group>"; };
@@ -172,6 +187,7 @@
 		ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationBuilder.swift; sourceTree = "<group>"; };
 		ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationInteractor.swift; sourceTree = "<group>"; };
 		ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProtocols.swift; sourceTree = "<group>"; };
+		ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +280,7 @@
 		8E71C16A23999EA90051C45E /* RIBs */ = {
 			isa = PBXGroup;
 			children = (
+				AC27F66726D3BED7007614AC /* Validator */,
 				ACD89BA026C55C4D0007C140 /* Authorization  */,
 				8E73C8CD239C5B42000A7F8A /* Main */,
 				8EFD7C14239BF005002EBA60 /* Profile */,
@@ -286,6 +303,7 @@
 				8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */,
 				8EAFFC4626C51ACC00613A07 /* Observable+filteredByState.swift */,
 				8E73C892239C4411000A7F8A /* TableViewRegisterable.swift */,
+				ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */,
 				8E73C897239C4482000A7F8A /* UITableViewXibContainerCell.swift */,
 				8E73C8F0239C6D13000A7F8A /* Router+Detach.swift */,
 				8E5925D624812927002623FB /* PublishObservable.swift */,
@@ -400,6 +418,20 @@
 				8EFD7C3C239C16CB002EBA60 /* ErrorMessageView.swift */,
 			);
 			path = CommonViews;
+			sourceTree = "<group>";
+		};
+		AC27F66726D3BED7007614AC /* Validator */ = {
+			isa = PBXGroup;
+			children = (
+				AC27F67226D3C020007614AC /* ValidatorProtocols.swift */,
+				AC27F66B26D3BFB2007614AC /* ValidatorBuilder.swift */,
+				AC27F66826D3BFB2007614AC /* ValidatorRouter.swift */,
+				AC27F66C26D3BFB2007614AC /* ValidatorInteractor.swift */,
+				AC27F67526D3C04B007614AC /* ValidatorPresenter.swift */,
+				AC27F66A26D3BFB2007614AC /* ValidatorViewController.swift */,
+				AC27F66926D3BFB2007614AC /* ValidatorViewController.storyboard */,
+			);
+			path = Validator;
 			sourceTree = "<group>";
 		};
 		ACD89BA026C55C4D0007C140 /* Authorization  */ = {
@@ -523,6 +555,7 @@
 			files = (
 				8E73C8D5239C60AF000A7F8A /* Main.storyboard in Resources */,
 				8E73C8AE239C493A000A7F8A /* DisclosureTextView.xib in Resources */,
+				AC27F66E26D3BFB2007614AC /* ValidatorViewController.storyboard in Resources */,
 				8E71C14723999E940051C45E /* LaunchScreen.storyboard in Resources */,
 				8E71C14423999E940051C45E /* Assets.xcassets in Resources */,
 				8E73C8A6239C45AE000A7F8A /* ContactFieldView.xib in Resources */,
@@ -588,9 +621,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ACD89BA826C55C9B0007C140 /* AuthorizationViewController.swift in Sources */,
+				AC27F66F26D3BFB2007614AC /* ValidatorViewController.swift in Sources */,
 				8EFD7C10239BF000002EBA60 /* ProfileStackViewController.swift in Sources */,
 				8E71C13B23999E920051C45E /* AppDelegate.swift in Sources */,
 				8EFD7C4D239C22A4002EBA60 /* Observable+Extensions.swift in Sources */,
+				AC27F67626D3C04B007614AC /* ValidatorPresenter.swift in Sources */,
 				ACD89BA926C55C9B0007C140 /* AuthorizationBuilder.swift in Sources */,
 				8E73C8E8239C64D9000A7F8A /* MainScreenBuilder.swift in Sources */,
 				ACD89BAC26C55CBA0007C140 /* AuthorizationProtocols.swift in Sources */,
@@ -599,19 +634,23 @@
 				8EFD7C27239BF7D1002EBA60 /* StoryboardInstantiatable.swift in Sources */,
 				8EFD7C0D239BF000002EBA60 /* ProfilePresenter.swift in Sources */,
 				8E73C8E7239C64D9000A7F8A /* MainScreenProtocols.swift in Sources */,
+				AC27F67026D3BFB2007614AC /* ValidatorBuilder.swift in Sources */,
 				8E73C898239C4482000A7F8A /* UITableViewXibContainerCell.swift in Sources */,
 				8E73C8CA239C5B01000A7F8A /* RootNavigationProtocols.swift in Sources */,
 				8E73C8E6239C64D9000A7F8A /* MainScreenViewController.swift in Sources */,
 				AC2C5A7F26CC029800110BFB /* AuthorizationProvider.swift in Sources */,
+				AC27F66D26D3BFB2007614AC /* ValidatorRouter.swift in Sources */,
 				8E73C8F1239C6D13000A7F8A /* Router+Detach.swift in Sources */,
 				8E73C8C9239C5B01000A7F8A /* RootNavigationViewController.swift in Sources */,
 				8EFD7C39239C1504002EBA60 /* LoadingIndicatorView.swift in Sources */,
 				8E71C13D23999E920051C45E /* SceneDelegate.swift in Sources */,
 				8EFD7C2A239BF95B002EBA60 /* ProfileTableViewController.swift in Sources */,
+				ACEA26E126D0017300A3A7F0 /* PhoneNumberTextField.swift in Sources */,
 				8E73C8BF239C5A46000A7F8A /* AppComponent.swift in Sources */,
 				8EFD7C25239BF77A002EBA60 /* VIPBinder.swift in Sources */,
 				8E5925DB24812DD5002623FB /* LoadingState.swift in Sources */,
 				8E73C8E9239C64D9000A7F8A /* MainScreenInteractor.swift in Sources */,
+				AC27F67126D3BFB2007614AC /* ValidatorInteractor.swift in Sources */,
 				8EFD7C1C239BF15C002EBA60 /* ProfileServiceImp.swift in Sources */,
 				8EAFFC4726C51ACC00613A07 /* Observable+filteredByState.swift in Sources */,
 				8EFD7C0E239BF000002EBA60 /* ProfileRouter.swift in Sources */,
@@ -633,6 +672,7 @@
 				8E5925E324813924002623FB /* DenestifyTuple.swift in Sources */,
 				8E73C8A5239C45AE000A7F8A /* ContactFieldView.swift in Sources */,
 				8EFD7C13239BF000002EBA60 /* ProfileInteractor.swift in Sources */,
+				AC27F67326D3C020007614AC /* ValidatorProtocols.swift in Sources */,
 				8E73C8CB239C5B01000A7F8A /* RootNavigationBuilder.swift in Sources */,
 				8E5925D924812D75002623FB /* Observable+LoadingIndicator.swift in Sources */,
 				8EFD7C12239BF000002EBA60 /* ProfileBuilder.swift in Sources */,
