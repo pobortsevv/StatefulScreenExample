@@ -8,6 +8,7 @@
 
 import RIBs
 import RxSwift
+import RxCocoa
 import UIKit
 
 final class ValidatorViewController: UIViewController, ValidatorViewControllable {
@@ -38,7 +39,6 @@ extension ValidatorViewController {
 		codeTextField.layer.cornerRadius = 12
 		codeErrorLabel.text = ""
 		
-		
 		view.addStretchedToBounds(subview: loadingIndicatorView)
 		loadingIndicatorView.isVisible = false
 	}
@@ -48,13 +48,37 @@ extension ValidatorViewController: BindableView {
 	func getOutput() -> ValidatorViewOutput { viewOutput }
 	
 	func bindWith(_ input: ValidatorPresenterOutput) {
-		//
+		disposeBag.insert {
+			input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.rx.isVisible,
+																								 loadingIndicatorView.indicatorView.rx.isAnimating)
+			
+			input.code.drive(codeTextField.rx.text)
+			input.showNumber.drive(phoneNumberLabel.rx.text)
+			
+			input.showNetworkError.emit(onNext: { [weak self] error in
+				if let error = error {
+					self?.networkErrorLabel.text = error
+					self?.networkErrorLabel.textColor = .red
+					self?.codeTextField.text = nil
+				}
+			})
+			
+			input.showValidationError.emit(onNext: { [weak self] error in
+				if let error = error {
+					self?.codeErrorLabel.text = error
+					self?.codeErrorLabel.textColor = .red
+					self?.codeTextField.text = nil
+				}
+			})
+			
+			codeTextField.rx.text.orEmpty.bind(to: viewOutput.$codeTextChange)
+		}
 	}
 }
 
 extension ValidatorViewController {
 	private struct ViewOutput: ValidatorViewOutput {
-		//
+		@PublishControlEvent var codeTextChange: ControlEvent<String>
 	}
 }
 

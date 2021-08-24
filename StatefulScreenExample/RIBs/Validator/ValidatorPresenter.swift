@@ -10,13 +10,78 @@ import RIBs
 import RxCocoa
 import RxSwift
 
-final class ValidatorPresenter: ValidatorPresentable {}
+final class ValidatorPresenter: ValidatorPresentable {
+	private let phoneNumber: String
+	init(phoneNumber: String) {
+		self.phoneNumber = phoneNumber
+	}
+}
 
 // MARK: - IOTransformer
 
 extension ValidatorPresenter: IOTransformer {
 	func transform(input: ValidatorInteractorOutput) -> ValidatorPresenterOutput {
-		//
-		return ValidatorPresenterOutput()
+		let state = input.state
+		
+		let showNumber = input.screenDataModel.map { screenDataModel -> String in
+			return screenDataModel.phoneNumber
+		}.asDriverIgnoringError()
+		
+		let isContentViewVisible = state.compactMap { state -> Void? in
+			switch state {
+			case .routedToMainScreen: return Void()
+			case .userInput, .sendingCodeCheckRequest, .updateProfile: return nil
+			}
+		}
+		.map { true }
+		.startWith(false)
+		.asDriverIgnoringError()
+		
+		let initialLoadingIndicatorVisible = LoadingIndicatorEvent(state: state)
+		
+		let code = input.screenDataModel.map { screenDataModel -> String in
+			return screenDataModel.codeTextField
+		}
+		.asDriverIgnoringError()
+		
+		let showNetworkError = state.map { state -> String? in
+			switch state {
+			case let .userInput(error):
+				switch error {
+				case .validationError:
+					return nil
+				case .networkError:
+					return error?.localizedDescription
+				case .none:
+					return nil
+				}
+			case .routedToMainScreen, .sendingCodeCheckRequest, .updateProfile:
+				return nil
+			}
+		}.asSignalIgnoringError()
+		
+		let showValidationError = state.map { state -> String? in
+			switch state {
+			case let .userInput(error):
+				switch error {
+				case .validationError:
+					return error?.localizedDescription
+				case .networkError:
+					return nil
+				case .none:
+					return nil
+				}
+			case .routedToMainScreen, .sendingCodeCheckRequest, .updateProfile:
+				return nil
+			}
+		}.asSignalIgnoringError()
+		
+		return ValidatorPresenterOutput(showNumber: showNumber, isContentViewVisible: isContentViewVisible, initialLoadingIndicatorVisible: initialLoadingIndicatorVisible, code: code, showNetworkError: showNetworkError, showValidationError: showValidationError)
 	}
 }
+
+//extension ValidatorPresenter {
+//	private enum Helper: Namespace {
+//		static func
+//	}
+//}

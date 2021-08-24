@@ -10,6 +10,5 @@ import RIBs
 import NotificationCenter
 
 protocol RootDependency: Dependency {
-  var profileService: ProfileService { get }
 	var profileProvider: ProfileProviderImp { get }
 }

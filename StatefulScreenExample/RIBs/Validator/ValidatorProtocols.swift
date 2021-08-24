@@ -13,7 +13,7 @@ import RxSwift
 // MARK: - Builder
 
 protocol ValidatorBuildable: Buildable {
-		func build() -> ValidatorRouting
+	func build(phoneNumber: String) -> ValidatorRouting
 }
 
 // MARK: - Router
@@ -35,8 +35,8 @@ protocol ValidatorPresentable: Presentable {}
 // MARK: States
 
 public enum ValidatorInteractorState {
-	case userInput
-	case sendingCodeCheckRequest(code: String)
+	case userInput(error: AuthError?)
+	case sendingCodeCheckRequest
 	case updateProfile
 	case routedToMainScreen
 }
@@ -74,30 +74,30 @@ struct ValidatorInteractorOutput {
 }
 
 struct ValidatorPresenterOutput {
-//	let showCode: Driver<String>
-//	let isContentViewVisible: Driver<Bool>
-//
-//	let initialLoadingIndicatorVisible: Driver<Bool>
-//
-//	let phoneNumber: Driver<String>
-//	let	isButtonEnable: Driver<Bool>
-//	let showError: Signal<ErrorMessageViewModel?>
+	let showNumber: Driver<String>
+	let isContentViewVisible: Driver<Bool>
+
+	let initialLoadingIndicatorVisible: Driver<Bool>
+
+	let code: Driver<String>
+	let showNetworkError: Signal<String?>
+	let showValidationError: Signal<String?>
 }
 
 protocol ValidatorViewOutput {
-//	var getSMSButtonTap: ControlEvent<Void> { get }
-//	var phoneNumberTextChange: ControlEvent<String> { get }
-//	var retryButtonTap: ControlEvent<Void> { get }
+	var codeTextChange: ControlEvent<String> { get }
 }
 
 // MARK: ScreenDataModel
 
 struct ValidatorScreenDataModel {
 	var codeTextField: String
+	let phoneNumber: String
 }
 
 extension ValidatorScreenDataModel {
-	init() {
+	init(phoneNumber: String) {
 		codeTextField = ""
+		self.phoneNumber = phoneNumber
 	}
 }

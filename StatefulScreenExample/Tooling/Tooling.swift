@@ -93,3 +93,5 @@ public func formatPhone(number: String) -> String {
 	}
 	return formatedNumber
 }
+
+

@@ -25,7 +25,7 @@ final class ProfileBuilder: Builder<RootDependency>, ProfileBuildable {
     where V: ProfileViewControllable & BindableView, V.Input == ProfilePresenterOutput, V.Output == ProfileViewOutput {
     
       let presenter = ProfilePresenter()
-      let interactor = ProfileInteractor(presenter: presenter, profileService: dependency.profileService)
+      let interactor = ProfileInteractor(presenter: presenter, profileService: dependency.profileProvider)
       
       VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
       

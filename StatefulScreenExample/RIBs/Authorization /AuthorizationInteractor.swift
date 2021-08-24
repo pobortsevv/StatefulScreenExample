@@ -11,8 +11,6 @@ import RxCocoa
 import RxSwift
 
 final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresentable>, AuthorizationInteractable {
-	// MARK: Dependecies
-	
 	weak var router: AuthorizationRouting?
 	
 	private let authorizationProvider: AuthorizationProfileProvider
@@ -35,10 +33,6 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 		super.init(presenter: presenter)
 	}
 	
-	override func didBecomeActive() {
-		super.didBecomeActive()
-	}
-
 	private func recieveSMS(number: String?) {
 		authorizationProvider.checkNumber(number) { [weak self] result in
 			switch result {
