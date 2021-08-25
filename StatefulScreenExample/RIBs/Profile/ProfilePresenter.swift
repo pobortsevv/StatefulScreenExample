@@ -23,7 +23,7 @@ extension ProfilePresenter: IOTransformer {
       // После загрузки 1-й порции данных контент всегда виден
       switch state {
       case .dataLoaded: return Void()
-      case .loadingError, .isLoading: return nil
+			case .loadingError, .isLoading, .routeToEdit: return nil
       }
     }
     .map { true }
@@ -36,7 +36,7 @@ extension ProfilePresenter: IOTransformer {
       switch state {
       case .loadingError(let error):
         return ErrorMessageViewModel(title: error.localizedDescription, buttonTitle: "Повторить")
-      case .isLoading, .dataLoaded:
+			case .isLoading, .dataLoaded, .routeToEdit:
         return nil
       }
     }
@@ -67,9 +67,9 @@ extension ProfilePresenter {
                                   phone: TitledOptionalText(title: "Телефон", maybeText: profile.phone),
                                   myOrders: "Мои заказы")
           
-        case .loadingError, .isLoading:
+				case .loadingError, .isLoading, .routeToEdit:
           return nil
-        }
+				}
       }
       .distinctUntilChanged()
       .asDriverIgnoringError()

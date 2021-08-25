@@ -155,7 +155,9 @@ extension ProfileStackViewController: RibStoryboardInstantiatable {}
 // MARK: - View Output
 
 extension ProfileStackViewController {
-  private struct ViewOutput: ProfileViewOutput {
+	private struct ViewOutput: ProfileViewOutput {
+		@PublishControlEvent var editProfileTap: ControlEvent<Void>
+		
     @PublishControlEvent var emailUpdateTap: ControlEvent<Void>
     
     @PublishControlEvent var myOrdersTap: ControlEvent<Void>

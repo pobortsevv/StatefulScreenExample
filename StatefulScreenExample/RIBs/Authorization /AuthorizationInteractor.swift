@@ -82,7 +82,7 @@ extension AuthorizationInteractor {
 	private enum StateTransform: StateTransformer{
 		/// case .userInput
 		static let byUserInputState: (State) -> Bool = { state -> Bool in
-			guard case .userInput = state else {return false}; return true
+			guard case .userInput = state else { return false }; return true
 		}
 		
 		/// case .sendingSMSCodeRequest

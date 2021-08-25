@@ -15,7 +15,6 @@ final class AuthorizationBuilder: Builder<RootDependency>, AuthorizationBuildabl
 		let interactor = AuthorizationInteractor(presenter: presenter,
 																						 authorizationProvider: dependency.profileProvider)
 		
-		// После верстки
 		VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
 	
 		return AuthorizationRouter(interactor: interactor,

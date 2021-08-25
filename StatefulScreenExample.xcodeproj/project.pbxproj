@@ -74,6 +74,13 @@
 		AC2C5A7F26CC029800110BFB /* AuthorizationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2C5A7E26CC029800110BFB /* AuthorizationProvider.swift */; };
 		AC6A6D3226C66CEB004C7DC9 /* AuthorizationProfileProviderImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6A6D3126C66CEB004C7DC9 /* AuthorizationProfileProviderImp.swift */; };
 		ACAF42D126C98A5E00AD55C2 /* AuthorizationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAF42D026C98A5E00AD55C2 /* AuthorizationPresenter.swift */; };
+		ACC7C64126D6551300D2812F /* ProfileEditorRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C63C26D6551300D2812F /* ProfileEditorRouter.swift */; };
+		ACC7C64226D6551300D2812F /* ProfileEditorViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ACC7C63D26D6551300D2812F /* ProfileEditorViewController.storyboard */; };
+		ACC7C64326D6551300D2812F /* ProfileEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C63E26D6551300D2812F /* ProfileEditorViewController.swift */; };
+		ACC7C64426D6551300D2812F /* ProfileEditorBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C63F26D6551300D2812F /* ProfileEditorBuilder.swift */; };
+		ACC7C64526D6551300D2812F /* ProfileEditorInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C64026D6551300D2812F /* ProfileEditorInteractor.swift */; };
+		ACC7C64726D6553700D2812F /* ProfileEditorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C64626D6553700D2812F /* ProfileEditorProtocols.swift */; };
+		ACC7C64926D6554E00D2812F /* ProfileEditorPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC7C64826D6554E00D2812F /* ProfileEditorPresenter.swift */; };
 		ACD89BA626C55C9B0007C140 /* AuthorizationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA126C55C9B0007C140 /* AuthorizationRouter.swift */; };
 		ACD89BA726C55C9B0007C140 /* AuthorizationViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ACD89BA226C55C9B0007C140 /* AuthorizationViewController.storyboard */; };
 		ACD89BA826C55C9B0007C140 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA326C55C9B0007C140 /* AuthorizationViewController.swift */; };
@@ -177,6 +184,13 @@
 		AC2C5A7E26CC029800110BFB /* AuthorizationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProvider.swift; sourceTree = "<group>"; };
 		AC6A6D3126C66CEB004C7DC9 /* AuthorizationProfileProviderImp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProfileProviderImp.swift; sourceTree = "<group>"; };
 		ACAF42D026C98A5E00AD55C2 /* AuthorizationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationPresenter.swift; sourceTree = "<group>"; };
+		ACC7C63C26D6551300D2812F /* ProfileEditorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorRouter.swift; sourceTree = "<group>"; };
+		ACC7C63D26D6551300D2812F /* ProfileEditorViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ProfileEditorViewController.storyboard; sourceTree = "<group>"; };
+		ACC7C63E26D6551300D2812F /* ProfileEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorViewController.swift; sourceTree = "<group>"; };
+		ACC7C63F26D6551300D2812F /* ProfileEditorBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorBuilder.swift; sourceTree = "<group>"; };
+		ACC7C64026D6551300D2812F /* ProfileEditorInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorInteractor.swift; sourceTree = "<group>"; };
+		ACC7C64626D6553700D2812F /* ProfileEditorProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorProtocols.swift; sourceTree = "<group>"; };
+		ACC7C64826D6554E00D2812F /* ProfileEditorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorPresenter.swift; sourceTree = "<group>"; };
 		ACD89BA126C55C9B0007C140 /* AuthorizationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationRouter.swift; sourceTree = "<group>"; };
 		ACD89BA226C55C9B0007C140 /* AuthorizationViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AuthorizationViewController.storyboard; sourceTree = "<group>"; };
 		ACD89BA326C55C9B0007C140 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
@@ -276,6 +290,7 @@
 		8E71C16A23999EA90051C45E /* RIBs */ = {
 			isa = PBXGroup;
 			children = (
+				ACC7C63B26D6534700D2812F /* ProfileEditor */,
 				AC27F66726D3BED7007614AC /* Validator */,
 				ACD89BA026C55C4D0007C140 /* Authorization  */,
 				8E73C8CD239C5B42000A7F8A /* Main */,
@@ -428,6 +443,20 @@
 			path = Validator;
 			sourceTree = "<group>";
 		};
+		ACC7C63B26D6534700D2812F /* ProfileEditor */ = {
+			isa = PBXGroup;
+			children = (
+				ACC7C64626D6553700D2812F /* ProfileEditorProtocols.swift */,
+				ACC7C63F26D6551300D2812F /* ProfileEditorBuilder.swift */,
+				ACC7C63C26D6551300D2812F /* ProfileEditorRouter.swift */,
+				ACC7C64026D6551300D2812F /* ProfileEditorInteractor.swift */,
+				ACC7C64826D6554E00D2812F /* ProfileEditorPresenter.swift */,
+				ACC7C63E26D6551300D2812F /* ProfileEditorViewController.swift */,
+				ACC7C63D26D6551300D2812F /* ProfileEditorViewController.storyboard */,
+			);
+			path = ProfileEditor;
+			sourceTree = "<group>";
+		};
 		ACD89BA026C55C4D0007C140 /* Authorization  */ = {
 			isa = PBXGroup;
 			children = (
@@ -550,6 +579,7 @@
 				8E73C8D5239C60AF000A7F8A /* Main.storyboard in Resources */,
 				8E73C8AE239C493A000A7F8A /* DisclosureTextView.xib in Resources */,
 				AC27F66E26D3BFB2007614AC /* ValidatorViewController.storyboard in Resources */,
+				ACC7C64226D6551300D2812F /* ProfileEditorViewController.storyboard in Resources */,
 				8E71C14723999E940051C45E /* LaunchScreen.storyboard in Resources */,
 				8E71C14423999E940051C45E /* Assets.xcassets in Resources */,
 				8E73C8A6239C45AE000A7F8A /* ContactFieldView.xib in Resources */,
@@ -632,6 +662,7 @@
 				8E73C898239C4482000A7F8A /* UITableViewXibContainerCell.swift in Sources */,
 				8E73C8CA239C5B01000A7F8A /* RootNavigationProtocols.swift in Sources */,
 				8E73C8E6239C64D9000A7F8A /* MainScreenViewController.swift in Sources */,
+				ACC7C64426D6551300D2812F /* ProfileEditorBuilder.swift in Sources */,
 				AC2C5A7F26CC029800110BFB /* AuthorizationProvider.swift in Sources */,
 				AC27F66D26D3BFB2007614AC /* ValidatorRouter.swift in Sources */,
 				8E73C8F1239C6D13000A7F8A /* Router+Detach.swift in Sources */,
@@ -644,7 +675,9 @@
 				8EFD7C25239BF77A002EBA60 /* VIPBinder.swift in Sources */,
 				8E5925DB24812DD5002623FB /* LoadingState.swift in Sources */,
 				8E73C8E9239C64D9000A7F8A /* MainScreenInteractor.swift in Sources */,
+				ACC7C64726D6553700D2812F /* ProfileEditorProtocols.swift in Sources */,
 				AC27F67126D3BFB2007614AC /* ValidatorInteractor.swift in Sources */,
+				ACC7C64326D6551300D2812F /* ProfileEditorViewController.swift in Sources */,
 				8EAFFC4726C51ACC00613A07 /* Observable+filteredByState.swift in Sources */,
 				8EFD7C0E239BF000002EBA60 /* ProfileRouter.swift in Sources */,
 				8E73C8AD239C493A000A7F8A /* DisclosureTextView.swift in Sources */,
@@ -654,6 +687,7 @@
 				8EFD7C2D239BFB20002EBA60 /* RootDependency.swift in Sources */,
 				ACAF42D126C98A5E00AD55C2 /* AuthorizationPresenter.swift in Sources */,
 				8EFD7C11239BF000002EBA60 /* ProfileProtocols.swift in Sources */,
+				ACC7C64926D6554E00D2812F /* ProfileEditorPresenter.swift in Sources */,
 				ACD89BAA26C55C9B0007C140 /* AuthorizationInteractor.swift in Sources */,
 				8EFD7C3D239C16CB002EBA60 /* ErrorMessageView.swift in Sources */,
 				8E73C8E4239C64D9000A7F8A /* MainScreenRouter.swift in Sources */,
@@ -667,6 +701,8 @@
 				AC27F67326D3C020007614AC /* ValidatorProtocols.swift in Sources */,
 				8E73C8CB239C5B01000A7F8A /* RootNavigationBuilder.swift in Sources */,
 				8E5925D924812D75002623FB /* Observable+LoadingIndicator.swift in Sources */,
+				ACC7C64526D6551300D2812F /* ProfileEditorInteractor.swift in Sources */,
+				ACC7C64126D6551300D2812F /* ProfileEditorRouter.swift in Sources */,
 				8EFD7C12239BF000002EBA60 /* ProfileBuilder.swift in Sources */,
 				ACD89BA626C55C9B0007C140 /* AuthorizationRouter.swift in Sources */,
 				8EFD7C1A239BF0A1002EBA60 /* ProfileService.swift in Sources */,

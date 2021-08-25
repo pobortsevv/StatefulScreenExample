@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vKn-9P-Ny8">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vKn-9P-Ny8">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -23,7 +25,7 @@
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yYM-AM-DmP" userLabel="StubView">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" id="yFu-cL-p1N"/>
                                                 </constraints>
@@ -42,6 +44,7 @@
                                 <viewLayoutGuide key="frameLayoutGuide" id="QG3-4B-DoX"/>
                             </scrollView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="HgA-Aw-ocO"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="hGP-tf-US0" firstAttribute="top" secondItem="HgA-Aw-ocO" secondAttribute="top" id="EK0-BA-bGh"/>
@@ -49,7 +52,6 @@
                             <constraint firstAttribute="bottom" secondItem="hGP-tf-US0" secondAttribute="bottom" id="T0P-g7-0wH"/>
                             <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="hGP-tf-US0" secondAttribute="trailing" id="bSu-s7-rAB"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="HgA-Aw-ocO"/>
                     </view>
                     <connections>
                         <outlet property="scrollView" destination="hGP-tf-US0" id="Dq5-b9-jVH"/>
@@ -61,4 +63,9 @@
             <point key="canvasLocation" x="244" y="204.64767616191907"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

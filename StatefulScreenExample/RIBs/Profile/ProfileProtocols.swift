@@ -36,13 +36,45 @@ protocol ProfileRouting: ViewableRouting {
   func routeToEmailAddition()
   
   func routeToOrdersList()
+	func routeToEdit(profile: Profile)
 }
 
 protocol ProfilePresentable: Presentable {}
 
 // MARK: Outputs
 
-typealias ProfileInteractorState = LoadingState<Profile, Error>
+//typealias ProfileInteractorState = LoadingState<Profile, Error>
+
+public enum ProfileInteractorState {
+	case isLoading
+	case dataLoaded(profile: Profile)
+	case loadingError(error: Error)
+	case routeToEdit
+}
+
+extension ProfileInteractorState: GeneralizableState {
+	public var isLoadingState: Bool {
+		guard case .isLoading = self else { return false }
+		return true
+	}
+	
+	public var isDataLoadedState: Bool {
+		guard case .dataLoaded = self else { return false }
+		return true
+	}
+	
+	public var isLoadingErrorState: Bool {
+		guard case .loadingError = self else { return false }
+		return true
+	}
+}
+
+extension ProfileInteractorState: LoadingIndicatableState {
+	public var shouldLoadingIndicatorBeVisible: Bool {
+		guard case .isLoading = self else { return false }
+		return true
+	}
+}
 
 struct ProfilePresenterOutput {
   let viewModel: Driver<ProfileViewModel>
@@ -64,6 +96,8 @@ protocol ProfileViewOutput {
   var retryButtonTap: ControlEvent<Void> { get }
   
   var pullToRefresh: ControlEvent<Void> { get }
+	
+	var editProfileTap: ControlEvent<Void> { get }
 }
 
 struct ProfileViewModel: Equatable {

@@ -13,6 +13,10 @@ import RxSwift
 
 final class ProfileTableViewController: UIViewController, ProfileViewControllable {
   @IBOutlet private weak var tableView: UITableView!
+	private let edit = UIBarButtonItem(title: "Edit",
+																		 style: .plain,
+																		 target: self,
+																		 action: nil)
 
   private let loadingIndicatorView = LoadingIndicatorView()
   private let errorMessageView = ErrorMessageView()
@@ -44,6 +48,8 @@ extension ProfileTableViewController {
 
     view.addStretchedToBounds(subview: loadingIndicatorView)
     view.addStretchedToBounds(subview: errorMessageView)
+		
+		navigationItem.rightBarButtonItem = self.edit
 
     tableView.refreshControl = refreshControl
     
@@ -88,6 +94,8 @@ extension ProfileTableViewController: BindableView {
     input.hideRefreshControl.emit(to: refreshControl.rx.endRefreshing).disposed(by: disposeBag)
     
     refreshControl.rx.controlEvent(.valueChanged).bind(to: viewOutput.$pullToRefresh).disposed(by: disposeBag)
+		
+		edit.rx.tap.bind(to: viewOutput.$editProfileTap).disposed(by: disposeBag)
   }
 
   /// Преобразуем ProfileViewModel в представление, подходящее для TableView
@@ -182,14 +190,17 @@ extension ProfileTableViewController: RibStoryboardInstantiatable {}
 // MARK: - View Output
 
 extension ProfileTableViewController {
-  private struct ViewOutput: ProfileViewOutput {
+	private struct ViewOutput: ProfileViewOutput {
+
     @PublishControlEvent var emailUpdateTap: ControlEvent<Void>
 
     @PublishControlEvent var myOrdersTap: ControlEvent<Void>
 
     @PublishControlEvent var retryButtonTap: ControlEvent<Void>
     
-    @PublishControlEvent  var pullToRefresh: ControlEvent<Void>
+    @PublishControlEvent var pullToRefresh: ControlEvent<Void>
+	
+		@PublishControlEvent var editProfileTap: ControlEvent<Void>
   }
 }
 

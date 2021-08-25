@@ -29,6 +29,6 @@ final class ProfileBuilder: Builder<RootDependency>, ProfileBuildable {
       
       VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
       
-      return ProfileRouter(interactor: interactor, viewController: viewController)
+		return ProfileRouter(interactor: interactor, viewController: viewController, profileEditorBuilder: ProfileEditorBuilder(dependency: dependency))
   }
 }

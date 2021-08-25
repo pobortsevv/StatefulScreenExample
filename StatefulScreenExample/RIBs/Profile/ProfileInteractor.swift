@@ -56,8 +56,9 @@ extension ProfileInteractor: IOTransformer {
     let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
     
     let requests = makeRequests()
+		let routes = makeRoutes()
     
-    StateTransform.transform(trait: trait, viewOutput: viewOutput, responses: responses, requests: requests)
+		StateTransform.transform(trait: trait, viewOutput: viewOutput, responses: responses, requests: requests, routes: routes)
     
     bindStatefulRouting(viewOutput, trait: trait)
     
@@ -104,15 +105,16 @@ extension ProfileInteractor {
     static func transform(trait: StateTransformTrait<State>,
                           viewOutput: ProfileViewOutput,
                           responses: Responses,
-                          requests: Requests) {
+                          requests: Requests,
+													routes: Routes) {
       StateTransform.transitions {
         // isLoading => dataLoaded
         responses.didLoadProfile.filteredByState(trait.readOnlyState, filter: byIsLoadingState)
-          .map { profile in State.dataLoaded(profile) }
+					.map { profile in State.dataLoaded(profile: profile) }
         
         // isLoading => loadingError
         responses.profileLoadingError.filteredByState(trait.readOnlyState, filter: byIsLoadingState)
-          .map { error in State.loadingError(error) }
+					.map { error in State.loadingError(error: error) }
         
         // dataLoaded => isLoading
         // Рефрешим данные при pullToRefresh
@@ -127,6 +129,16 @@ extension ProfileInteractor {
         }
         .do(onNext: requests.loadProfile)
         .map { State.isLoading }
+				
+				viewOutput.editProfileTap.filteredByState(trait.readOnlyState, filterMap: { state -> Profile? in
+					guard case .dataLoaded(let profile) = state else { return nil }; return profile
+				})
+					.observe(on: MainScheduler.instance)
+					.do(afterNext: { profile in
+						routes.routeToProfileEditor(profile)
+					})
+					.map { _ in State.routeToEdit }
+				
       }.bindToAndDisposedBy(trait: trait)
     }
   }
@@ -138,6 +150,12 @@ extension ProfileInteractor {
   private func makeRequests() -> Requests {
     Requests(loadProfile: { [weak self] in self?.loadProfile() })
   }
+	
+	private func makeRoutes() -> Routes {
+		Routes(routeToProfileEditor: { [weak self] profile in
+			self?.router?.routeToEdit(profile: profile)
+		})
+	}
 }
 
 // MARK: - Nested Types
@@ -151,4 +169,8 @@ extension ProfileInteractor {
   private struct Requests {
     let loadProfile: VoidClosure
   }
+	
+	private struct Routes {
+		let routeToProfileEditor: (_ profile: Profile) -> Void
+	}
 }
