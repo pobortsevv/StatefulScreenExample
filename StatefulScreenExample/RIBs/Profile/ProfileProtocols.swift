@@ -67,6 +67,7 @@ protocol ProfileViewOutput {
 }
 
 struct ProfileViewModel: Equatable {
+	let authorized: String
   let firstName: TitledOptionalText
   let lastName: TitledOptionalText
 

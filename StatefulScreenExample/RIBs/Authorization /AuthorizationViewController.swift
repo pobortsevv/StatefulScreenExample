@@ -75,8 +75,14 @@ extension AuthorizationViewController: BindableView {
 			
 			input.phoneNumber.drive(phoneNumberTextField.rx.text)
 			
-			input.isButtonEnable.do(onNext: { [weak getSMSButton] isEnabled in
-				getSMSButton?.alpha = isEnabled ? 1 : 0.3
+			input.isButtonEnable.do(onNext: { [weak self] isEnabled in
+				switch isEnabled {
+				case true:
+					self?.getSMSButton?.alpha = 1
+					self?.view.endEditing(true)
+				case false:
+					self?.getSMSButton?.alpha = 0.3
+				}
 			}).drive(getSMSButton.rx.isEnabled)
 			
 			input.showCode.drive(onNext: { [weak self] smsCode in

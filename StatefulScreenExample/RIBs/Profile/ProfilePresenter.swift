@@ -58,8 +58,10 @@ extension ProfilePresenter {
         switch state {
         case .dataLoaded(let profile):
           let emailTitle: String = (profile.email == nil ? "Добавить e-mail" : "E-mail")
+					let authorizedTitle: String = (profile.authorized ? "Зарегистрированный пользователь" : "Незарегистрированный пользователь")
           
-          return ProfileViewModel(firstName: TitledOptionalText(title: "Имя", maybeText: profile.firstName),
+          return ProfileViewModel(authorized: authorizedTitle,
+																	firstName: TitledOptionalText(title: "Имя", maybeText: profile.firstName),
                                   lastName: TitledOptionalText(title: "Фамилия", maybeText: profile.lastName),
                                   email: TitledOptionalText(title: emailTitle, maybeText: profile.email),
                                   phone: TitledOptionalText(title: "Телефон", maybeText: profile.phone),

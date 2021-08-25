@@ -9,7 +9,7 @@
 import Foundation
 
 final class ProfileProviderImp: AuthorizationProfileProvider {
-	private(set) var profile = Profile(firstName: nil, lastName: nil, email: nil, phone: "+7 999 123 45 67")
+	private(set) var profile = Profile(firstName: nil, lastName: nil, email: nil, phone: "+7 999 123 45 67", authorized: false)
 	
 	private(set) var smsCode = ""
 	private var profileRequestsCount: Int = 0
@@ -30,7 +30,7 @@ final class ProfileProviderImp: AuthorizationProfileProvider {
 	}
 	
 	func updatePhoneNumber(phoneNumber: String) {
-		self.profile = Profile(firstName: nil, lastName: nil, email: nil, phone: phoneNumber)
+		self.profile = Profile(firstName: nil, lastName: nil, email: nil, phone: phoneNumber, authorized: true)
 	}
 	
 	func checkNumber(_ number: String?, completion: @escaping (Result<String, Error>) -> Void) {

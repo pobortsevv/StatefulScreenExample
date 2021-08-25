@@ -102,11 +102,12 @@ extension ProfileTableViewController: BindableView {
       }
 
       let rowItems: [RowItem] = [
+				.authorized(viewModel.authorized),
 				.contactOptionalText(viewModel.firstName),
 				.contactOptionalText(viewModel.lastName),
         .contactOptionalText(viewModel.phone),
         emailItem,
-        .myOrders(viewModel.myOrders)
+        .myOrders(viewModel.myOrders),
       ]
 
       return [Section(title: nil, items: rowItems)]
@@ -124,6 +125,11 @@ extension ProfileTableViewController {
       -> RxTableViewSectionedAnimatedDataSource<Section>.ConfigureCell {
       return { _, tableView, indexPath, item -> UITableViewCell in
         switch item {
+				case .authorized(let title):
+					let cell: ContactFieldCell = tableView.dequeue(forIndexPath: indexPath)
+					cell.view.setTitle(title, text: nil)
+					return cell
+				
         case .contactField(let viewModel):
           let cell: ContactFieldCell = tableView.dequeue(forIndexPath: indexPath)
           cell.view.setTitle(viewModel.title, text: viewModel.text)
@@ -148,7 +154,7 @@ extension ProfileTableViewController {
           let cell: DisclosureTextCell = tableView.dequeue(forIndexPath: indexPath)
           cell.view.setText(title)
           return cell
-        }
+				}
       }
     }
   }
@@ -159,6 +165,7 @@ extension ProfileTableViewController: UITableViewDelegate {
     let rowItem = dataSource[indexPath]
 
     switch rowItem {
+		case .authorized: break
     case .addEmail: viewOutput.$emailUpdateTap.accept(Void())
     case .email: viewOutput.$emailUpdateTap.accept(Void())
     case .contactField: break
@@ -209,6 +216,7 @@ extension ProfileTableViewController {
   }
 
   private enum RowItem: Hashable, IdentifiableType {
+		case authorized(String)
     case contactField(TitledText)
     case contactOptionalText(TitledOptionalText)
     case addEmail(String)
@@ -217,6 +225,7 @@ extension ProfileTableViewController {
 
     var identity: String {
       switch self {
+			case .authorized(let text): return text
       case .contactField(let viewModel): return viewModel.title
       case .contactOptionalText(let viewModel): return viewModel.title
       case .addEmail(let message): return message

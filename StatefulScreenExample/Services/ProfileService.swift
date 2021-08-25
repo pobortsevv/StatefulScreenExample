@@ -17,6 +17,7 @@ struct Profile {
 	var lastName: String?
 	var email: String?
 	let phone: String
+	var authorized: Bool
 }
 
 extension Profile: Decodable {}

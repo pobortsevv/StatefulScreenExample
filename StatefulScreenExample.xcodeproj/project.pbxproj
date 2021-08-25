@@ -53,7 +53,6 @@
 		8EFD7C12239BF000002EBA60 /* ProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C0B239BF000002EBA60 /* ProfileBuilder.swift */; };
 		8EFD7C13239BF000002EBA60 /* ProfileInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C0C239BF000002EBA60 /* ProfileInteractor.swift */; };
 		8EFD7C1A239BF0A1002EBA60 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C19239BF0A1002EBA60 /* ProfileService.swift */; };
-		8EFD7C1C239BF15C002EBA60 /* ProfileServiceImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C1B239BF15C002EBA60 /* ProfileServiceImp.swift */; };
 		8EFD7C1E239BF582002EBA60 /* Tooling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C1D239BF582002EBA60 /* Tooling.swift */; };
 		8EFD7C25239BF77A002EBA60 /* VIPBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C24239BF77A002EBA60 /* VIPBinder.swift */; };
 		8EFD7C27239BF7D1002EBA60 /* StoryboardInstantiatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD7C26239BF7D1002EBA60 /* StoryboardInstantiatable.swift */; };
@@ -157,7 +156,6 @@
 		8EFD7C0B239BF000002EBA60 /* ProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBuilder.swift; sourceTree = "<group>"; };
 		8EFD7C0C239BF000002EBA60 /* ProfileInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInteractor.swift; sourceTree = "<group>"; };
 		8EFD7C19239BF0A1002EBA60 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
-		8EFD7C1B239BF15C002EBA60 /* ProfileServiceImp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileServiceImp.swift; sourceTree = "<group>"; };
 		8EFD7C1D239BF582002EBA60 /* Tooling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tooling.swift; sourceTree = "<group>"; };
 		8EFD7C24239BF77A002EBA60 /* VIPBinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIPBinder.swift; sourceTree = "<group>"; };
 		8EFD7C26239BF7D1002EBA60 /* StoryboardInstantiatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardInstantiatable.swift; sourceTree = "<group>"; };
@@ -383,7 +381,6 @@
 			isa = PBXGroup;
 			children = (
 				8EFD7C19239BF0A1002EBA60 /* ProfileService.swift */,
-				8EFD7C1B239BF15C002EBA60 /* ProfileServiceImp.swift */,
 				AC6A6D3126C66CEB004C7DC9 /* AuthorizationProfileProviderImp.swift */,
 				AC2C5A7E26CC029800110BFB /* AuthorizationProvider.swift */,
 			);
@@ -648,7 +645,6 @@
 				8E5925DB24812DD5002623FB /* LoadingState.swift in Sources */,
 				8E73C8E9239C64D9000A7F8A /* MainScreenInteractor.swift in Sources */,
 				AC27F67126D3BFB2007614AC /* ValidatorInteractor.swift in Sources */,
-				8EFD7C1C239BF15C002EBA60 /* ProfileServiceImp.swift in Sources */,
 				8EAFFC4726C51ACC00613A07 /* Observable+filteredByState.swift in Sources */,
 				8EFD7C0E239BF000002EBA60 /* ProfileRouter.swift in Sources */,
 				8E73C8AD239C493A000A7F8A /* DisclosureTextView.swift in Sources */,
