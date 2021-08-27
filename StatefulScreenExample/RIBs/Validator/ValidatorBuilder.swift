@@ -9,10 +9,11 @@
 import RIBs
 
 final class ValidatorBuilder: Builder<RootDependency>, ValidatorBuildable {
-	func build(phoneNumber: String) -> ValidatorRouting {
-			let viewController = ValidatorViewController.instantiateFromStoryboard()
-			let presenter = ValidatorPresenter(phoneNumber: phoneNumber)
+	func build(phoneNumber: String, listener: ValidatorListener) -> ValidatorRouting {
+		let viewController = ValidatorViewController.instantiateFromStoryboard()
+		let presenter = ValidatorPresenter(phoneNumber: phoneNumber)
 		let interactor = ValidatorInteractor(presenter: presenter, authorizationProvider: dependency.profileProvider, phoneNumber: phoneNumber)
+		interactor.listener = listener
 			
 			VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
 		

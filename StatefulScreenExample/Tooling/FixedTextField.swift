@@ -1,5 +1,5 @@
 //
-//  PhoneNumberTextField.swift
+//  FixedTextField.swift
 //  StatefulScreenExample
 //
 //  Created by Vladimir Pobortsev on 20.08.2021.

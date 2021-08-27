@@ -57,11 +57,25 @@ extension ProfileInteractor: IOTransformer {
     
     let requests = makeRequests()
 		let routes = makeRoutes()
+		let profileUpdating = profileService.profileEdited
     
-		StateTransform.transform(trait: trait, viewOutput: viewOutput, responses: responses, requests: requests, routes: routes)
+		StateTransform.transform(trait: trait,
+														 viewOutput: viewOutput,
+														 responses: responses,
+														 requests: requests,
+														 routes: routes,
+														 profileUpdating: profileUpdating)
     
     bindStatefulRouting(viewOutput, trait: trait)
-    
+		
+		viewOutput.editProfileTap
+			.filteredByState(trait.readOnlyState, filterMap: { state in
+				guard case .dataLoaded(let profile) = state else { return nil }
+				return profile
+			})
+			.bind { routes.routeToProfileEditor($0) }
+			.disposed(by: trait.disposeBag)
+		
     return trait.readOnlyState
   }
   
@@ -81,7 +95,8 @@ extension ProfileInteractor: IOTransformer {
       default: break
       }
     }).disposed(by: trait.disposeBag)
-    
+		
+		//  dataLoaded -> routeToProfileEditor
     viewOutput.myOrdersTap.filteredByState(trait.readOnlyState, filter: byDataLoadedState)
       .subscribe(onNext: { [weak self] _ in
         self?.router?.routeToOrdersList()
@@ -106,7 +121,8 @@ extension ProfileInteractor {
                           viewOutput: ProfileViewOutput,
                           responses: Responses,
                           requests: Requests,
-													routes: Routes) {
+													routes: Routes,
+													profileUpdating: Observable<Profile>) {
       StateTransform.transitions {
         // isLoading => dataLoaded
         responses.didLoadProfile.filteredByState(trait.readOnlyState, filter: byIsLoadingState)
@@ -130,14 +146,8 @@ extension ProfileInteractor {
         .do(onNext: requests.loadProfile)
         .map { State.isLoading }
 				
-				viewOutput.editProfileTap.filteredByState(trait.readOnlyState, filterMap: { state -> Profile? in
-					guard case .dataLoaded(let profile) = state else { return nil }; return profile
-				})
-					.observe(on: MainScheduler.instance)
-					.do(afterNext: { profile in
-						routes.routeToProfileEditor(profile)
-					})
-					.map { _ in State.routeToEdit }
+				profileUpdating.filteredByState(trait.readOnlyState, filter: byDataLoadedState)
+					.map { profile in State.dataLoaded(profile: profile) }
 				
       }.bindToAndDisposedBy(trait: trait)
     }

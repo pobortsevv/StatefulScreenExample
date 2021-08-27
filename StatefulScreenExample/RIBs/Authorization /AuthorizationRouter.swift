@@ -26,11 +26,15 @@ final class AuthorizationRouter: ViewableRouter<AuthorizationInteractable, Autho
 	}
 	
 	func routeToValidator(phoneNumber: String) {
-		let router = validatorBuilder.build(phoneNumber: phoneNumber)
+		let router = validatorBuilder.build(phoneNumber: phoneNumber, listener: interactor)
 		attachChild(router)
 		viewController.uiviewController.present(router.viewControllable.uiviewController, animated: true)
 //		viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController, animated: true)
 		
 		detachWhenClosed(child: router, disposedBy: disposeBag)
+	}
+	
+	func close() {
+		viewController.uiviewController.dismiss(animated: true)
 	}
 }

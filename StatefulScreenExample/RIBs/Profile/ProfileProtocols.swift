@@ -45,7 +45,7 @@ protocol ProfilePresentable: Presentable {}
 
 //typealias ProfileInteractorState = LoadingState<Profile, Error>
 
-public enum ProfileInteractorState {
+enum ProfileInteractorState {
 	case isLoading
 	case dataLoaded(profile: Profile)
 	case loadingError(error: Error)
@@ -82,6 +82,7 @@ struct ProfilePresenterOutput {
   
   let initialLoadingIndicatorVisible: Driver<Bool>
   let hideRefreshControl: Signal<Void>
+	let isButtonEditEnable: Driver<Bool>
   
   /// nil означает что нужно спрятать сообщение об ошибке
   let showError: Signal<ErrorMessageViewModel?>

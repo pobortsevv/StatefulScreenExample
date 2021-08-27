@@ -13,13 +13,18 @@ import RxSwift
 // MARK: - Builder
 
 protocol ValidatorBuildable: Buildable {
-	func build(phoneNumber: String) -> ValidatorRouting
+	func build(phoneNumber: String, listener: ValidatorListener) -> ValidatorRouting
+}
+
+protocol ValidatorListener: AnyObject {
+	func successAuth()
 }
 
 // MARK: - Router
 
 protocol ValidatorInteractable: Interactable {
-		var router: ValidatorRouting? { get set }
+	var router: ValidatorRouting? { get set }
+	var listener: ValidatorListener? { get set }
 }
 
 protocol ValidatorViewControllable: ViewControllable {}
@@ -37,8 +42,8 @@ protocol ValidatorPresentable: Presentable {}
 public enum ValidatorInteractorState {
 	case userInput(error: AuthError?)
 	case sendingCodeCheckRequest
-	case updateProfile
-	case routedToMainScreen
+	case updatingProfile
+	case updatedProfile
 }
 
 extension ValidatorInteractorState: GeneralizableState {
@@ -48,7 +53,7 @@ extension ValidatorInteractorState: GeneralizableState {
 	}
 	
 	public var isDataLoadedState: Bool {
-		guard case .routedToMainScreen = self else { return false }
+		guard case .updatingProfile = self else { return false }
 		return true
 	}
 	

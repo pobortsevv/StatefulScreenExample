@@ -18,7 +18,7 @@ extension AuthorizationPresenter: IOTransformer {
 	func transform(input: AuthorizationInteractorOutput) -> AuthorizationPresenterOutput {
 		let state = input.state
 		
-		let viewModel = Helper.viewModel(state)
+		let showCode = Helper.showCode(state)
 		
 		let isContentViewVisible = state.compactMap { state -> Void? in
 			switch state {
@@ -52,7 +52,7 @@ extension AuthorizationPresenter: IOTransformer {
 		}
 		.asDriverIgnoringError()
 		
-		return AuthorizationPresenterOutput(showCode: viewModel,
+		return AuthorizationPresenterOutput(showCode: showCode,
 																				isContentViewVisible: isContentViewVisible,
 																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
 																				phoneNumber: phoneNumber,
@@ -63,7 +63,7 @@ extension AuthorizationPresenter: IOTransformer {
 
 extension AuthorizationPresenter {
 	private enum Helper: Namespace {
-		static func viewModel(_ state: Observable<AuthorizationInteractorState>) -> Driver<String> {
+		static func showCode(_ state: Observable<AuthorizationInteractorState>) -> Driver<String> {
 			return state.compactMap { state -> String? in
 				switch state {
 				case let .routedToCodeCheck(code):

@@ -78,6 +78,16 @@ extension ProfileTableViewController: BindableView {
 
     input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.rx.isVisible).disposed(by: disposeBag)
     input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.indicatorView.rx.isAnimating).disposed(by: disposeBag)
+		
+		input.isButtonEditEnable.do(onNext: { [weak self] isEnabled in
+			if isEnabled {
+				self?.edit.isEnabled = true
+			} else {
+				self?.edit.isEnabled = false
+			}
+		})
+		.drive(edit.rx.isEnabled)
+		.disposed(by: disposeBag)
 
     input.showError.emit(onNext: { [weak self] maybeViewModel in
       self?.errorMessageView.isVisible = (maybeViewModel != nil)
@@ -135,7 +145,9 @@ extension ProfileTableViewController {
         switch item {
 				case .authorized(let title):
 					let cell: ContactFieldCell = tableView.dequeue(forIndexPath: indexPath)
-					cell.view.setTitle(title, text: nil)
+					cell.textLabel?.text = title
+					cell.textLabel?.textColor = title == "Незарегистрированный пользователь" ? .red : .green
+//					navigationItem.rightBarButtonItem?.isEnabled = title == "Незарегистрированный пользователь" ? false : true
 					return cell
 				
         case .contactField(let viewModel):

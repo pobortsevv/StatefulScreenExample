@@ -29,8 +29,8 @@ extension ValidatorPresenter: IOTransformer {
 		
 		let isContentViewVisible = state.compactMap { state -> Void? in
 			switch state {
-			case .routedToMainScreen: return Void()
-			case .userInput, .sendingCodeCheckRequest, .updateProfile: return nil
+			case .userInput: return Void()
+			case .sendingCodeCheckRequest, .updatingProfile, .updatedProfile: return nil
 			}
 		}
 		.map { true }
@@ -55,7 +55,7 @@ extension ValidatorPresenter: IOTransformer {
 				case .none:
 					return nil
 				}
-			case .routedToMainScreen, .sendingCodeCheckRequest, .updateProfile:
+			case .sendingCodeCheckRequest, .updatingProfile, .updatedProfile:
 				return nil
 			}
 		}.asSignalIgnoringError()
@@ -71,7 +71,7 @@ extension ValidatorPresenter: IOTransformer {
 				case .none:
 					return nil
 				}
-			case .routedToMainScreen, .sendingCodeCheckRequest, .updateProfile:
+			case .sendingCodeCheckRequest, .updatingProfile, .updatedProfile:
 				return nil
 			}
 		}.asSignalIgnoringError()

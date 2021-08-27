@@ -87,7 +87,7 @@
 		ACD89BA926C55C9B0007C140 /* AuthorizationBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */; };
 		ACD89BAA26C55C9B0007C140 /* AuthorizationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */; };
 		ACD89BAC26C55CBA0007C140 /* AuthorizationProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */; };
-		ACEA26E126D0017300A3A7F0 /* PhoneNumberTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */; };
+		ACEA26E126D0017300A3A7F0 /* FixedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACEA26E026D0017300A3A7F0 /* FixedTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,7 +197,7 @@
 		ACD89BA426C55C9B0007C140 /* AuthorizationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationBuilder.swift; sourceTree = "<group>"; };
 		ACD89BA526C55C9B0007C140 /* AuthorizationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationInteractor.swift; sourceTree = "<group>"; };
 		ACD89BAB26C55CBA0007C140 /* AuthorizationProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationProtocols.swift; sourceTree = "<group>"; };
-		ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberTextField.swift; sourceTree = "<group>"; };
+		ACEA26E026D0017300A3A7F0 /* FixedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -314,7 +314,7 @@
 				8EFD7C4C239C22A4002EBA60 /* Observable+Extensions.swift */,
 				8EAFFC4626C51ACC00613A07 /* Observable+filteredByState.swift */,
 				8E73C892239C4411000A7F8A /* TableViewRegisterable.swift */,
-				ACEA26E026D0017300A3A7F0 /* PhoneNumberTextField.swift */,
+				ACEA26E026D0017300A3A7F0 /* FixedTextField.swift */,
 				8E73C897239C4482000A7F8A /* UITableViewXibContainerCell.swift */,
 				8E73C8F0239C6D13000A7F8A /* Router+Detach.swift */,
 				8E5925D624812927002623FB /* PublishObservable.swift */,
@@ -670,7 +670,7 @@
 				8EFD7C39239C1504002EBA60 /* LoadingIndicatorView.swift in Sources */,
 				8E71C13D23999E920051C45E /* SceneDelegate.swift in Sources */,
 				8EFD7C2A239BF95B002EBA60 /* ProfileTableViewController.swift in Sources */,
-				ACEA26E126D0017300A3A7F0 /* PhoneNumberTextField.swift in Sources */,
+				ACEA26E126D0017300A3A7F0 /* FixedTextField.swift in Sources */,
 				8E73C8BF239C5A46000A7F8A /* AppComponent.swift in Sources */,
 				8EFD7C25239BF77A002EBA60 /* VIPBinder.swift in Sources */,
 				8E5925DB24812DD5002623FB /* LoadingState.swift in Sources */,

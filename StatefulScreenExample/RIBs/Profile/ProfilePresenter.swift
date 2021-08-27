@@ -42,11 +42,21 @@ extension ProfilePresenter: IOTransformer {
     }
     // .distinctUntilChanged() - ⚠️ здесь этот оператор применять не нужно
     .asSignal(onErrorJustReturn: nil)
+		
+		let isButtonEditEnable = state.map { state -> Bool in
+			switch state {
+			case .dataLoaded(let profile):
+				return profile.authorized
+			case .loadingError, .isLoading, .routeToEdit:
+				return false
+			}
+		}
+		.asDriverIgnoringError()
     
     return ProfilePresenterOutput(viewModel: viewModel,
                                   isContentViewVisible: isContentViewVisible,
                                   initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
-                                  hideRefreshControl: hideRefreshControl,
+																	hideRefreshControl: hideRefreshControl, isButtonEditEnable: isButtonEditEnable,
                                   showError: showError)
   }
 }

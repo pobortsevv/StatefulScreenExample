@@ -18,7 +18,7 @@ protocol AuthorizationBuildable: Buildable {
 
 // MARK: - Router
 
-protocol AuthorizationInteractable: Interactable {
+protocol AuthorizationInteractable: Interactable, ValidatorListener {
 		var router: AuthorizationRouting? { get set }
 }
 
@@ -28,6 +28,7 @@ protocol AuthorizationViewControllable: ViewControllable {}
 
 protocol AuthorizationRouting: ViewableRouting {
 	func routeToValidator(phoneNumber: String)
+	func close()
 }
 
 protocol AuthorizationPresentable: Presentable {}

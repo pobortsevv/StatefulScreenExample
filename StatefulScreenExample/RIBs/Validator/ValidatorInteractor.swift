@@ -12,6 +12,8 @@ import RxCocoa
 
 final class ValidatorInteractor: PresentableInteractor<ValidatorPresentable>, ValidatorInteractable{
 	weak var router: ValidatorRouting?
+	weak var listener: ValidatorListener?
+	
 	private let phoneNumber: String
 	
 	private let authorizationProvider: AuthorizationProfileProvider
@@ -72,7 +74,8 @@ extension ValidatorInteractor: IOTransformer {
 														 responses: responses,
 														 requests: requests,
 														 screenDataModel: _screenDataModel,
-														 disposeBag: disposeBag)
+														 disposeBag: disposeBag,
+														 listener: listener)
 		
 		return ValidatorInteractorOutput(state: trait.readOnlyState, screenDataModel: _screenDataModel.asObservable())
 	}
@@ -100,7 +103,8 @@ extension ValidatorInteractor {
 													responses: Responses,
 													requests: Requests,
 													screenDataModel: BehaviorRelay<ValidatorScreenDataModel>,
-													disposeBag: DisposeBag) {
+													disposeBag: DisposeBag,
+													listener: ValidatorListener?) {
 			StateTransform.transitions {
 				// UserInput -> SendingCodeRequest
 				code.filter { text in text.count == 5 }
@@ -108,8 +112,7 @@ extension ValidatorInteractor {
 					.do(afterNext: requests.checkCode)
 					.map { _ in State.sendingCodeCheckRequest }
 				
-				
-				// SendingCodeRequest -> UserInput
+				// SendingCodeRequest -> UserInput(error)
 				responses.networkError
 				  .filteredByState(trait.readOnlyState, filter: bySendingCodeCheckRequestState)
 					.map { error in State.userInput(error: error) }
@@ -123,12 +126,19 @@ extension ValidatorInteractor {
 					.filteredByState(trait.readOnlyState, filter: bySendingCodeCheckRequestState)
 					.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
 					.do(afterNext: { _, number in requests.updateProfilePhoneNumber(number.phoneNumber)})
-					.map {_ in State.routedToMainScreen}
+					.map {_ in State.updatingProfile}
 				
-				// UpdateProfile -> routeToMainScreen
+				// UpdateProfile -> close
+				responses.updatedProfile
+					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
+						guard case .updatingProfile = state else { return false }; return true
+					})
+					.do(afterNext: { listener?.successAuth()})
+					.map { _ in State.updatedProfile}
+				
 				
 			}.bindToAndDisposedBy(trait: trait)
-			
+
 			updateScreenDataModel(screenDataModel: screenDataModel, codeText: code, disposeBag: disposeBag)
 		}
 		
@@ -161,6 +171,7 @@ extension ValidatorInteractor {
 extension ValidatorInteractor {
 	private struct Responses {
 		@PublishObservable var correctCode: Observable<Bool>
+		@PublishObservable var updatedProfile: Observable<Void>
 		@PublishObservable var networkError: Observable<AuthError>
 		@PublishObservable var validationError: Observable<AuthError>
 	}

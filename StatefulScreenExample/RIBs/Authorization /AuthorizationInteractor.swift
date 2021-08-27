@@ -24,6 +24,8 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 	
 	private let responses = Responses()
 	
+	private let externalEvents = ExternalEvents()
+	
 	private let disposeBag = DisposeBag()
 	
 	init(presenter: AuthorizationPresentable,
@@ -40,6 +42,14 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 			case .failure(let error): self?.responses.$authorizationError.accept(error)
 			}
 		}
+	}
+}
+
+// Validator Listener
+extension AuthorizationInteractor {
+	func successAuth() {
+		print("kek")
+		externalEvents.$successAuth.accept(Void())
 	}
 }
 
@@ -68,7 +78,8 @@ extension AuthorizationInteractor: IOTransformer {
 														 requests: requests,
 														 routes: routes,
 														 screenDataModel: _screenDataModel,
-														 disposeBag: disposeBag)
+														 disposeBag: disposeBag,
+														 externalEvents: externalEvents)
 		
 		return AuthorizationInteractorOutput(state: trait.readOnlyState,
 																				 screenDataModel: _screenDataModel.asObservable())
@@ -97,7 +108,8 @@ extension AuthorizationInteractor {
 													requests: Requests,
 													routes: Routes,
 													screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>,
-													disposeBag: DisposeBag) {
+													disposeBag: DisposeBag,
+													externalEvents: ExternalEvents) {
 			StateTransform.transitions {
 				// userInput -> sendingSMSCodeRequest
 				viewOutput.getSMSButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
@@ -110,7 +122,7 @@ extension AuthorizationInteractor {
 					.filteredByState(trait.readOnlyState, filterMap: bySendingSMSCodeRequestState)
 					.map { error, phoneNumber in State.smsCodeRequestError(error: error, phoneNumber: phoneNumber) }
 				
-				// responseError -> userInput
+				// responseError -> sendingSMSCodeRequest
 				viewOutput.retryButtonTap.filteredByState(trait.readOnlyState, filterMap: { state -> String? in
 					guard case let .smsCodeRequestError(_, phoneNumber) = state else { return nil }; return phoneNumber
 				})
@@ -131,6 +143,7 @@ extension AuthorizationInteractor {
 			}.bindToAndDisposedBy(trait: trait)
 		
 			updateScreenDataModel(screenDataModel: screenDataModel, phoneNumberText: phoneNumber, disposeBag: disposeBag)
+			bindStatelessRouting(disposeBag: disposeBag, externalEvents: externalEvents, close: routes.close)
 		}
 		
 		static func updateScreenDataModel(screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>,
@@ -145,6 +158,12 @@ extension AuthorizationInteractor {
 				.bind(to: screenDataModel)
 				.disposed(by: disposeBag)
 		}
+		
+		static func bindStatelessRouting(disposeBag: DisposeBag,
+																		 externalEvents: ExternalEvents,
+																		 close:  @escaping VoidClosure) {
+			externalEvents.successAuth.bind(onNext: close).disposed(by: disposeBag)
+		}
 	}
 }
 
@@ -156,7 +175,8 @@ extension AuthorizationInteractor {
 	}
 	
 	private func makeRoutes() -> Routes {
-		Routes(routeToValidator: { [weak self] formattedPhoneNumber in self?.router?.routeToValidator(phoneNumber: formattedPhoneNumber) })
+		Routes(routeToValidator: { [weak self] formattedPhoneNumber in self?.router?.routeToValidator(phoneNumber: formattedPhoneNumber) },
+					 close: { [weak self] in self?.router?.close()})
 	}
 }
 
@@ -168,12 +188,17 @@ extension AuthorizationInteractor {
 		@PublishObservable var authorizationError: Observable<Error>
 	}
 	
+	private struct ExternalEvents {
+		@PublishObservable var successAuth: Observable<Void>
+	}
+	
 	private struct Requests {
 		let recieveSMS: (_ phoneNumer: String) -> Void
 	}
 	
 	private struct Routes {
 		let routeToValidator: (_ phoneNumber: String) -> Void
+		let close: VoidClosure
 	}
 }
 

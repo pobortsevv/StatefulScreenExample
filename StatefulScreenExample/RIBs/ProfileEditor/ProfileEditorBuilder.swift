@@ -9,11 +9,12 @@
 import RIBs
 
 final class ProfileEditorBuilder: Builder<RootDependency>, ProfileEditorBuildable {
-    func build() -> ProfileEditorRouting {
+	func build(profile: Profile) -> ProfileEditorRouting {
 			let viewController = ProfileEditorViewController.instantiateFromStoryboard()
 			let presenter = ProfileEditorPresenter()
 			let interactor = ProfileEditorInteractor(presenter: viewController,
-																							 profileProvider: dependency.profileProvider)
+																							 profileProvider: dependency.profileProvider,
+																							 profile: profile)
 			
 			VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
 			

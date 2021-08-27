@@ -6,12 +6,15 @@
 //  Copyright © 2019 IgnatyevProd. All rights reserved.
 //
 
+import RxCocoa
+import RxSwift
+
 protocol ProfileService: AnyObject {
+	var profileEdited: Observable<Profile> { get }
   func profile(_ completion: @escaping (Result<Profile, Error>) -> Void)
-  func updateEmail(_ newEmail: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
-public struct Profile {
+struct Profile {
 	var firstName: String?
 	var lastName: String?
 	var email: String?

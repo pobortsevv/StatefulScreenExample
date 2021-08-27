@@ -23,7 +23,7 @@ final class ProfileRouter: ViewableRouter<ProfileInteractable, ProfileViewContro
   }
   
 	func routeToEdit(profile: Profile) {
-		let router = profileEditorBuilder.build()
+		let router = profileEditorBuilder.build(profile: profile)
 		attachChild(router)
 		
 		viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController, animated: true)

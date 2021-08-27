@@ -13,7 +13,7 @@ import UIKit
 import NotificationCenter
 
 final class AuthorizationViewController: UIViewController, AuthorizationViewControllable {
-	@IBOutlet private weak var phoneNumberTextField: PhoneNumberTextField!
+	@IBOutlet private weak var phoneNumberTextField: FixedTextField!
 	@IBOutlet private weak var getSMSButton: UIButton!
 	
 	// Notification
@@ -157,7 +157,7 @@ extension AuthorizationViewController: UNUserNotificationCenterDelegate {
 // MARK: - Help Method
 
 extension AuthorizationViewController {
-	@objc func doneButtonTapped() {
+	@objc private func doneButtonTapped() {
 		view.endEditing(true)
 	}
 }
