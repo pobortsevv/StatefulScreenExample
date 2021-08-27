@@ -37,7 +37,7 @@ protocol ProfileEditorPresentable: Presentable {}
 // MARK: States
 
 enum ProfileEditorInteractorState {
-	case userInput(error: Error?)
+	case userInput
 	case updatingProfile(profile: Profile)
 	case updateProfileRequestError(error: Error, profile: Profile)
 	case routedToProfile
@@ -81,6 +81,7 @@ struct ProfileEditorPresenterOutput {
 	let userSecondName: Driver<String>
 	let email: Driver<String>
 	let phone: Driver<String>
+	let isEmailValid: Signal<Bool>
 //	let	isButtonEnable: Driver<Bool>
 	let showError: Signal<ErrorMessageViewModel?>
 }
@@ -100,6 +101,7 @@ struct ProfileEditorScreenDataModel {
 	var secondNameTextField: String
 	var phoneNumberTextField: String
 	var emailTextField: String
+	var isEmailValid: Bool
 }
 
 extension ProfileEditorScreenDataModel {
@@ -108,6 +110,7 @@ extension ProfileEditorScreenDataModel {
 		secondNameTextField = (secondName ?? "")
 		phoneNumberTextField = phoneNumber
 		emailTextField = (email ?? "")
+		isEmailValid = true
 	}
 }
 

@@ -48,7 +48,6 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 // Validator Listener
 extension AuthorizationInteractor {
 	func successAuth() {
-		print("kek")
 		externalEvents.$successAuth.accept(Void())
 	}
 }

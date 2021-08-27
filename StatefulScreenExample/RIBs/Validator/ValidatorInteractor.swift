@@ -41,7 +41,9 @@ final class ValidatorInteractor: PresentableInteractor<ValidatorPresentable>, Va
 	private func checkCode(code: String) {
 		authorizationProvider.checkCode(code: code, completion: { [weak self] result in
 			switch result {
-			case .success: self?.responses.$correctCode.accept(true)
+			case .success:
+				self?.responses.$correctCode.accept(true)
+				self?.responses.$updatedProfile.accept(Void())
 			case .failure(let error):
 				switch error {
 				case .validationError: self?.responses.$validationError.accept(error)
@@ -133,6 +135,7 @@ extension ValidatorInteractor {
 					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
 						guard case .updatingProfile = state else { return false }; return true
 					})
+					.observe(on: MainScheduler.instance)
 					.do(afterNext: { listener?.successAuth()})
 					.map { _ in State.updatedProfile}
 				

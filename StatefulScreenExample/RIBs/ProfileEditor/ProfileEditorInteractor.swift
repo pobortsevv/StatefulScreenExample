@@ -19,12 +19,12 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 
 	// MARK: Internals
 	
-	private let _state = BehaviorRelay<ProfileEditorInteractorState>(value: .userInput(error: nil))
+	private let _state = BehaviorRelay<ProfileEditorInteractorState>(value: .userInput)
 	
 	private let _screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>
 	
 	private let responses = Responses()
-	private let validationEmailResponses = ValidationEmailResponses()
+	private let emailValidation = EmailValidation()
 	
 	private let disposeBag = DisposeBag()
 	
@@ -49,15 +49,14 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 		}
 	}
 	
-	private func checkEmail(email: String) {
+	private func checkEmail(email: String) -> Bool {
 		if email != "" {
-			if email.firstIndex(of: "@") != email.lastIndex(of: "@") {
-				validationEmailResponses.$FormatError.accept(ValidationEmailError())
-				print("hello")
+			if email.contains("@") == false || email.firstIndex(of: "@") != email.lastIndex(of: "@") {
+				emailValidation.$isValid.accept(false)
+				return false
 			}
 		}
-		print("hello")
-		validationEmailResponses.$FormatValid.accept(Void())
+		return true
 	}
 }
 
@@ -95,16 +94,17 @@ extension ProfileEditorInteractor: IOTransformer {
 		let routes = makeRoutes()
 		let validationEmailRequests = makeValidationEmailRequests()
 		
+		
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,
 														 name: refinedName,
 														 secondName: refinedSecondName,
 														 email: refinedEmail,
 														 response: responses,
-														 validationEmailResponses: validationEmailResponses,
 														 requests: requests,
 														 validationEmailRequests: validationEmailRequests,
 														 routes: routes,
+														 emailValidation: emailValidation,
 														 screenDataModel: _screenDataModel,
 														 disposeBag: disposeBag)
 		
@@ -134,23 +134,17 @@ extension ProfileEditorInteractor {
 													secondName: Observable<String>,
 													email: Observable<String>,
 													response: Responses,
-													validationEmailResponses: ValidationEmailResponses,
 													requests: Requests,
-													validationEmailRequests: ValidationEmailRequests,
+													validationEmailRequests: ValidateEmail,
 													routes: Routes,
+													emailValidation: EmailValidation,
 													screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 													disposeBag: DisposeBag) {
 			StateTransform.transitions {
-				// UserInput -> UserInput(email error)
-				
-				
-				validationEmailResponses.FormatError
-					.filteredByState(trait.readOnlyState, filter: byUserInputState)
-					.map { error in State.userInput(error: error)}
-				
 				// UserInput -> UpdatingProfile
 				viewOutput.updateProfileButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
 					.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
+					.filter { _, text -> Bool in validationEmailRequests.checkEmail(text.emailTextField)}
 					.do(afterNext: { _, text in
 						requests.updateProfile(Profile(firstName: text.nameTextField,
 																					 lastName: text.secondNameTextField,
@@ -187,13 +181,8 @@ extension ProfileEditorInteractor {
 				
 			}.bindToAndDisposedBy(trait: trait)
 			
-//			viewOutput.updateProfileButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
-//				.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
-//				.do(onNext: { _, text in
-//					validationEmailRequests.checkEmail(text.emailTextField)
-//				})
-			
-			updateScreenDataModel(screenDataModel: screenDataModel,
+			updateScreenDataModel(emailValidation: emailValidation,
+														screenDataModel: screenDataModel,
 														nameText: name,
 														secondNameText: secondName,
 														emailText: email,
@@ -201,7 +190,8 @@ extension ProfileEditorInteractor {
 			
 		}
 		
-		static func updateScreenDataModel(screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
+		static func updateScreenDataModel(emailValidation: EmailValidation,
+																			screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 																			nameText: Observable<String>,
 																			secondNameText: Observable<String>,
 																			emailText: Observable<String>,
@@ -209,6 +199,13 @@ extension ProfileEditorInteractor {
 			let readOnlyScreenDataModel = screenDataModel.asObservable()
 			
 			disposeBag.insert {
+				emailValidation.isValid
+					.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
+					.map { isValid, screenDataModel in
+						mutate(value: screenDataModel, mutation: { $0.isEmailValid = isValid})
+					}
+					.bind(to: screenDataModel)
+				
 				nameText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { name, screenDataModel in
 						mutate(value: screenDataModel, mutation: { $0.nameTextField = name } )
@@ -224,7 +221,13 @@ extension ProfileEditorInteractor {
 						mutate(value: screenDataModel, mutation: { $0.emailTextField = email } )
 					}
 					.bind(to: screenDataModel)
+				emailText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
+					.map { email, screenDataModel in
+						mutate(value: screenDataModel, mutation: { $0.isEmailValid = true } )
+					}
+					.bind(to: screenDataModel)
 			}
+			
 		}
 	}
 }
@@ -240,8 +243,8 @@ extension ProfileEditorInteractor {
 		Routes(close: { [weak self] in self?.router?.close()} )
 	}
 	
-	private func makeValidationEmailRequests() -> ValidationEmailRequests {
-		ValidationEmailRequests(checkEmail: { [weak self] email in self?.checkEmail(email: email)})
+	private func makeValidationEmailRequests() -> ValidateEmail {
+		ValidateEmail(checkEmail: { [weak self] email in (self?.checkEmail(email: email))!})
 	}
 }
 
@@ -253,17 +256,16 @@ extension ProfileEditorInteractor {
 		@PublishObservable var updateError: Observable<Error>
 	}
 	
+	private struct EmailValidation {
+		@PublishObservable var isValid: Observable<Bool>
+	}
+	
 	private struct Requests {
 		let updateProfile: (_ profile: Profile) -> Void
 	}
 	
-	private struct ValidationEmailResponses {
-		@PublishObservable var FormatValid: Observable<Void>
-		@PublishObservable var FormatError: Observable<Error>
-	}
-	
-	private struct ValidationEmailRequests {
-		let checkEmail: (_ email: String) -> Void
+	private struct ValidateEmail {
+		let checkEmail: (_ email: String) -> Bool
 	}
 	
 	private struct Routes {

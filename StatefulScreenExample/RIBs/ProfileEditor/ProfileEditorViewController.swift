@@ -17,6 +17,7 @@ final class ProfileEditorViewController: UIViewController, ProfileEditorPresenta
 	@IBOutlet weak var phoneNumberTextField: FixedTextField!
 	@IBOutlet weak var emailTextField: FixedTextField!
 	
+	@IBOutlet weak var emailValidationErrorLabel: UILabel!
 	@IBOutlet weak var saveUpdateButton: UIButton!
 	
 	// Provider views
@@ -84,7 +85,23 @@ extension ProfileEditorViewController: BindableView {
 			input.userSecondName.drive(secondNameTextField.rx.text)
 			input.phone.drive(phoneNumberTextField.rx.text)
 			input.email.drive(emailTextField.rx.text)
-//
+			
+			input.isEmailValid.emit(onNext: { [weak self] isValid in
+				if isValid {
+					self?.emailValidationErrorLabel.isVisible = false
+					self?.emailTextField.textColor = .black
+					self?.emailTextField.layer.borderColor = .none
+					self?.emailTextField.layer.borderWidth = 0.0
+				} else {
+					self?.emailValidationErrorLabel.textColor = .red
+					self?.emailValidationErrorLabel.text = "Введен неверный email"
+					self?.emailValidationErrorLabel.isVisible = true
+					self?.emailTextField.textColor = .red
+					self?.emailTextField.layer.borderColor = UIColor.red.cgColor
+					self?.emailTextField.layer.borderWidth = 1.0
+				}
+				
+			})
 			
 			input.showError.emit(onNext: { [unowned self] maybeViewModel in
 				self.errorMessageView.isVisible = (maybeViewModel != nil)
@@ -102,6 +119,7 @@ extension ProfileEditorViewController: BindableView {
 			emailTextField.rx.text.orEmpty.bind(to: viewOutput.$emailTextChange)
 			saveUpdateButton.rx.tap.bind(to: viewOutput.$updateProfileButtonTap)
 		}
+		
 	}
 }
 

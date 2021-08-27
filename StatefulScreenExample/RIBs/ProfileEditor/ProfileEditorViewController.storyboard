@@ -88,15 +88,27 @@
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y35-nV-kS3">
+                                                        <rect key="frame" x="16" y="256" width="382" height="21"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="21" id="xh3-Vx-NtS"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstItem="Yai-IF-6L9" firstAttribute="top" secondItem="iXX-gh-6bu" secondAttribute="bottom" constant="16" id="0Sc-6A-8Vd"/>
+                                                    <constraint firstAttribute="trailing" secondItem="y35-nV-kS3" secondAttribute="trailing" constant="16" id="5bh-PU-nkr"/>
                                                     <constraint firstItem="iXX-gh-6bu" firstAttribute="top" secondItem="SZc-RS-TBX" secondAttribute="bottom" constant="16" id="8Md-3J-vsD"/>
+                                                    <constraint firstItem="y35-nV-kS3" firstAttribute="leading" secondItem="C6D-77-3Oe" secondAttribute="leading" constant="16" id="Cui-Tk-eb5"/>
                                                     <constraint firstItem="SZc-RS-TBX" firstAttribute="top" secondItem="kFK-ni-rhZ" secondAttribute="bottom" constant="16" id="GaY-bp-lq9"/>
                                                     <constraint firstItem="SZc-RS-TBX" firstAttribute="leading" secondItem="C6D-77-3Oe" secondAttribute="leading" constant="16" id="Ibs-x3-weC"/>
                                                     <constraint firstItem="Yai-IF-6L9" firstAttribute="leading" secondItem="C6D-77-3Oe" secondAttribute="leading" constant="16" id="L6d-Ba-x1m"/>
                                                     <constraint firstAttribute="trailing" secondItem="SZc-RS-TBX" secondAttribute="trailing" constant="16" id="Scw-pl-pYh"/>
+                                                    <constraint firstItem="y35-nV-kS3" firstAttribute="top" secondItem="Yai-IF-6L9" secondAttribute="bottom" constant="8" id="XAF-UF-6eG"/>
                                                     <constraint firstItem="kFK-ni-rhZ" firstAttribute="top" secondItem="C6D-77-3Oe" secondAttribute="top" constant="16" id="f6f-TX-EDR"/>
                                                     <constraint firstAttribute="trailing" secondItem="kFK-ni-rhZ" secondAttribute="trailing" constant="16" id="j0j-7q-ObD"/>
                                                     <constraint firstAttribute="trailing" secondItem="Yai-IF-6L9" secondAttribute="trailing" constant="16" id="jNP-yM-zLB"/>
@@ -134,6 +146,7 @@
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="emailTextField" destination="Yai-IF-6L9" id="ZdN-AU-6Ux"/>
+                        <outlet property="emailValidationErrorLabel" destination="y35-nV-kS3" id="if8-LU-Z17"/>
                         <outlet property="nameTextField" destination="kFK-ni-rhZ" id="lTx-pW-o3f"/>
                         <outlet property="phoneNumberTextField" destination="iXX-gh-6bu" id="0i4-QE-GMf"/>
                         <outlet property="saveUpdateButton" destination="OQu-S1-TMp" id="LQr-1U-dCj"/>

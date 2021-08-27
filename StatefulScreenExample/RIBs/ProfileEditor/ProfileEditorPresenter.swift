@@ -50,6 +50,11 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asDriverIgnoringError()
 		
+		let isEmailValid = input.screenDataModel.map { screenDataModel in
+			return screenDataModel.isEmailValid
+		}
+		.asSignalIgnoringError()
+		
 		let showError = state.map { state -> ErrorMessageViewModel? in
 			switch state {
 			case let .updateProfileRequestError(error, _):
@@ -66,6 +71,7 @@ extension ProfileEditorPresenter: IOTransformer {
 																				userSecondName: secondName,
 																				email: email,
 																				phone: phone,
+																				isEmailValid: isEmailValid,
 																				showError: showError)
 	}
 }
