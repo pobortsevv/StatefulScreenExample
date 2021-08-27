@@ -8,7 +8,7 @@
 
 import  UIKit
 
-final class PhoneNumberTextField: UITextField {
+final class FixedTextField: UITextField {
 	override func textRect(forBounds bounds: CGRect) -> CGRect {
 		textFieldRect(forBounds: bounds)
 	}
