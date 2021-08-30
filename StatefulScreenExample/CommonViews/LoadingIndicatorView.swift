@@ -7,9 +7,24 @@
 //
 
 import UIKit
+import Lottie
 
 final class LoadingIndicatorView: UIView {
+	// Create Animation object
+	let animation = Animation.named("Watermelon")
+	
+//	// Load animation to AnimationView
+	
+//	animationView.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+//
+//	// Add animationView as subview
+//	view.addSubview(animationView)
+//
+//	// Play the animation
+//	animationView.play()
+	
   let indicatorView = UIActivityIndicatorView()
+	let animationView = AnimationView()
   
   required init?(coder: NSCoder) {
     super.init(coder: coder)
@@ -18,6 +33,7 @@ final class LoadingIndicatorView: UIView {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
+		animationView.frame = frame
     initialSetup()
   }
   
@@ -25,7 +41,9 @@ final class LoadingIndicatorView: UIView {
     backgroundColor = UIColor.black.withAlphaComponent(0.15)
     
     indicatorView.translatesAutoresizingMaskIntoConstraints = false
+		animationView.animation = animation
     addSubview(indicatorView)
+		animationView.play()
     
     let constraints: [NSLayoutConstraint] = [
       indicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),

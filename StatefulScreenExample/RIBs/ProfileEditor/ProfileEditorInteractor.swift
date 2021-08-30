@@ -172,12 +172,16 @@ extension ProfileEditorInteractor {
 				
 				// UpdatingProfile -> routeToProfile
 				response.profileUpdated
-					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
-						guard case .updatingProfile = state else { return false }; return true
-					})
-					.observe(on: MainScheduler.instance)
-					.do(afterNext: routes.close)
+					.filteredByState(trait.readOnlyState, filterMap: byUpdatingProfileState)
 					.map { _ in State.routedToProfile}
+				
+				viewOutput.alertButtonTap
+					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
+						guard case .routedToProfile = state else { return false }; return true
+					})
+				.observe(on: MainScheduler.instance)
+				.do(afterNext: routes.close)
+				.map { _ in State.routedToProfile}
 				
 			}.bindToAndDisposedBy(trait: trait)
 			

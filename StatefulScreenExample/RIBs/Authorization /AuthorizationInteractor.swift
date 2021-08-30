@@ -49,6 +49,7 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 extension AuthorizationInteractor {
 	func successAuth() {
 		externalEvents.$successAuth.accept(Void())
+		self.router?.close()
 	}
 }
 

@@ -35,7 +35,6 @@ extension ValidatorViewController {
 	private func initailSetup() {
 		title = "Подтверждение кода"
 		
-		
 		codeTextField.layer.cornerRadius = 12
 		codeErrorLabel.text = ""
 		

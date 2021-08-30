@@ -11,15 +11,13 @@ import RxSwift
 
 
 final class AuthorizationRouter: ViewableRouter<AuthorizationInteractable, AuthorizationViewControllable>, AuthorizationRouting {
-
 	private let validatorBuilder: ValidatorBuildable
 	
 	private let disposeBag = DisposeBag()
 	
-	// TODO: Добавить buildable в аргументы для следующего экрана
 	init(interactor: AuthorizationInteractable,
-								viewController: AuthorizationViewControllable,
-								validatorBuilder: ValidatorBuildable) {
+			 viewController: AuthorizationViewControllable,
+			 validatorBuilder: ValidatorBuildable) {
 		self.validatorBuilder = validatorBuilder
 		super.init(interactor: interactor, viewController: viewController)
 		interactor.router = self
@@ -29,12 +27,10 @@ final class AuthorizationRouter: ViewableRouter<AuthorizationInteractable, Autho
 		let router = validatorBuilder.build(phoneNumber: phoneNumber, listener: interactor)
 		attachChild(router)
 		viewController.uiviewController.present(router.viewControllable.uiviewController, animated: true)
-//		viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController, animated: true)
-		
 		detachWhenClosed(child: router, disposedBy: disposeBag)
 	}
 	
 	func close() {
-		viewController.uiviewController.dismiss(animated: true)
+		viewController.uiviewController.presentingViewController?.dismiss(animated: true)
 	}
 }

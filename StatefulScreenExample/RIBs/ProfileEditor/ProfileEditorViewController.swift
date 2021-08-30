@@ -20,6 +20,10 @@ final class ProfileEditorViewController: UIViewController, ProfileEditorPresenta
 	@IBOutlet weak var emailValidationErrorLabel: UILabel!
 	@IBOutlet weak var saveUpdateButton: UIButton!
 	
+	private let profileSuccessfullyUpdated = UIAlertController(title: "Профиль успешно обновлён",
+																														 message: nil,
+																														 preferredStyle: UIAlertController.Style.alert)
+	
 	// Provider views
 	private let loadingIndicatorView = LoadingIndicatorView()
 	private let errorMessageView = ErrorMessageView()
@@ -86,6 +90,15 @@ extension ProfileEditorViewController: BindableView {
 			input.phone.drive(phoneNumberTextField.rx.text)
 			input.email.drive(emailTextField.rx.text)
 			
+			input.profileSuccessfullyEdited.emit(onNext: { [weak self] _ in
+				self?.profileSuccessfullyUpdated.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { action in
+					self?.viewOutput.$alertButtonTap.accept(Void())
+				}))
+				DispatchQueue.main.async(execute: {
+					self?.present(self!.profileSuccessfullyUpdated, animated: true, completion: nil)
+				})
+			})
+			
 			input.isEmailValid.emit(onNext: { [weak self] isValid in
 				if isValid {
 					self?.emailValidationErrorLabel.isVisible = false
@@ -119,7 +132,6 @@ extension ProfileEditorViewController: BindableView {
 			emailTextField.rx.text.orEmpty.bind(to: viewOutput.$emailTextChange)
 			saveUpdateButton.rx.tap.bind(to: viewOutput.$updateProfileButtonTap)
 		}
-		
 	}
 }
 
@@ -136,6 +148,7 @@ extension ProfileEditorViewController {
 		@PublishControlEvent var secondNameTextChange: ControlEvent<String>
 		@PublishControlEvent var emailTextChange: ControlEvent<String>
 		@PublishControlEvent var retryButtonTap: ControlEvent<Void>
+		@PublishControlEvent var alertButtonTap: ControlEvent<Void>
 	}
 }
 

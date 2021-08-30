@@ -147,7 +147,6 @@ extension ProfileTableViewController {
 					let cell: ContactFieldCell = tableView.dequeue(forIndexPath: indexPath)
 					cell.textLabel?.text = title
 					cell.textLabel?.textColor = title == "Незарегистрированный пользователь" ? .red : .green
-//					navigationItem.rightBarButtonItem?.isEnabled = title == "Незарегистрированный пользователь" ? false : true
 					return cell
 				
         case .contactField(let viewModel):

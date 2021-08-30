@@ -9,8 +9,6 @@
 import RIBs
 
 final class ProfileEditorRouter: ViewableRouter<ProfileEditorInteractable, ProfileEditorViewControllable>, ProfileEditorRouting {
-
-	// TODO: Constructor inject child builder protocols to allow building children.
 	override init(interactor: ProfileEditorInteractable, viewController: ProfileEditorViewControllable) {
 			super.init(interactor: interactor, viewController: viewController)
 			interactor.router = self

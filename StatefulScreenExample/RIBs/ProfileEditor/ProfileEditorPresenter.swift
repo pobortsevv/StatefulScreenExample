@@ -65,6 +65,15 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asSignalIgnoringError()
 		
+		let profileSuccessfullyEdited = state.compactMap { state -> Bool? in
+			switch state {
+			case .routedToProfile: return true
+			case .userInput, .updatingProfile, .updateProfileRequestError: return nil
+				}
+			}
+			.distinctUntilChanged()
+			.asSignalIgnoringError()
+		
 		return ProfileEditorPresenterOutput(isContentViewVisible: isContentViewVisible,
 																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
 																				userName: userName,
@@ -72,6 +81,7 @@ extension ProfileEditorPresenter: IOTransformer {
 																				email: email,
 																				phone: phone,
 																				isEmailValid: isEmailValid,
+																				profileSuccessfullyEdited: profileSuccessfullyEdited,
 																				showError: showError)
 	}
 }

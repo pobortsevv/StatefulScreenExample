@@ -82,6 +82,7 @@ struct ProfileEditorPresenterOutput {
 	let email: Driver<String>
 	let phone: Driver<String>
 	let isEmailValid: Signal<Bool>
+	let profileSuccessfullyEdited: Signal<Bool>
 //	let	isButtonEnable: Driver<Bool>
 	let showError: Signal<ErrorMessageViewModel?>
 }
@@ -92,6 +93,7 @@ protocol ProfileEditorViewOutput {
 	var secondNameTextChange: ControlEvent<String> { get }
 	var emailTextChange: ControlEvent<String> { get }
 	var retryButtonTap: ControlEvent<Void> { get }
+	var alertButtonTap: ControlEvent<Void> { get }
 }
 
 // MARK: ScreenDataModel
