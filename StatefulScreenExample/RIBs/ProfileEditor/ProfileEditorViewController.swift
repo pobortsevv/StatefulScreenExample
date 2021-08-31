@@ -12,14 +12,16 @@ import RxCocoa
 import UIKit
 
 final class ProfileEditorViewController: UIViewController, ProfileEditorPresentable, ProfileEditorViewControllable {
-	@IBOutlet weak var nameTextField: FixedTextField!
-	@IBOutlet weak var secondNameTextField: FixedTextField!
-	@IBOutlet weak var phoneNumberTextField: FixedTextField!
-	@IBOutlet weak var emailTextField: FixedTextField!
+	// сделать аутлеты приватными
+	@IBOutlet weak var nameTextField: CustomTextField!
+	@IBOutlet weak var secondNameTextField: CustomTextField!
+	@IBOutlet weak var phoneNumberTextField: CustomTextField!
+	@IBOutlet weak var emailTextField: CustomTextField!
 	
 	@IBOutlet weak var emailValidationErrorLabel: UILabel!
 	@IBOutlet weak var saveUpdateButton: UIButton!
 	
+	// удалить!
 	private let profileSuccessfullyUpdated = UIAlertController(title: "Профиль успешно обновлён",
 																														 message: nil,
 																														 preferredStyle: UIAlertController.Style.alert)
@@ -54,6 +56,7 @@ extension ProfileEditorViewController {
 		errorMessageView.isVisible = false
 		loadingIndicatorView.isVisible = false
 
+		emailValidationErrorLabel.text =  "Введен неверный email"
 		phoneNumberTextField.isEnabled = false
 		phoneNumberTextField.textColor = .gray
 		phoneNumberTextField.layer.borderColor = UIColor.lightGray.cgColor
@@ -61,6 +64,7 @@ extension ProfileEditorViewController {
 		tapGestureInitialSetup()
 	}
 	
+	// переименовать
 	private func tapGestureInitialSetup() {
 		let toolbar = UIToolbar()
 		
@@ -75,45 +79,33 @@ extension ProfileEditorViewController {
 		secondNameTextField.inputAccessoryView = toolbar
 		emailTextField.inputAccessoryView = toolbar
 	}
+	
+	@objc private func doneButtonTapped() {
+		view.endEditing(true)
+	}
 }
 
 extension ProfileEditorViewController: BindableView {
 	func getOutput() -> ProfileEditorViewOutput { viewOutput }
 	
 	func bindWith(_ input: ProfileEditorPresenterOutput) {
-
 		disposeBag.insert {
 			input.initialLoadingIndicatorVisible.drive(loadingIndicatorView.rx.isVisible,
 																								 loadingIndicatorView.indicatorView.rx.isAnimating)
-			input.userName.drive(nameTextField.rx.text)
-			input.userSecondName.drive(secondNameTextField.rx.text)
+			input.firstName.drive(nameTextField.rx.text)
+			input.lastName.drive(secondNameTextField.rx.text)
 			input.phone.drive(phoneNumberTextField.rx.text)
 			input.email.drive(emailTextField.rx.text)
 			
-			input.profileSuccessfullyEdited.emit(onNext: { [weak self] _ in
-				self?.profileSuccessfullyUpdated.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { action in
-					self?.viewOutput.$alertButtonTap.accept(Void())
-				}))
-				DispatchQueue.main.async(execute: {
-					self?.present(self!.profileSuccessfullyUpdated, animated: true, completion: nil)
-				})
-			})
+			input.profileSuccessfullyEdited.emit(onNext: { _ in self.presentProfileSuccessUpdateAlert() } )
 			
 			input.isEmailValid.emit(onNext: { [weak self] isValid in
-				if isValid {
-					self?.emailValidationErrorLabel.isVisible = false
-					self?.emailTextField.textColor = .black
-					self?.emailTextField.layer.borderColor = .none
-					self?.emailTextField.layer.borderWidth = 0.0
-				} else {
-					self?.emailValidationErrorLabel.textColor = .red
-					self?.emailValidationErrorLabel.text = "Введен неверный email"
-					self?.emailValidationErrorLabel.isVisible = true
-					self?.emailTextField.textColor = .red
-					self?.emailTextField.layer.borderColor = UIColor.red.cgColor
-					self?.emailTextField.layer.borderWidth = 1.0
-				}
-				
+				guard let self = self else { return }
+				self.emailValidationErrorLabel.isVisible = isValid ? false : true
+				self.emailTextField.textColor = isValid ? .black : .red
+				self.emailValidationErrorLabel.textColor = isValid ? .black : .red
+				self.emailTextField.layer.borderColor = isValid ? nil : UIColor.red.cgColor
+				self.emailTextField.layer.borderWidth = isValid ? 0 : 1
 			})
 			
 			input.showError.emit(onNext: { [unowned self] maybeViewModel in
@@ -127,8 +119,8 @@ extension ProfileEditorViewController: BindableView {
 					})
 				}
 			})
-			nameTextField.rx.text.orEmpty.bind(to: viewOutput.$nameTextChange)
-			secondNameTextField.rx.text.orEmpty.bind(to: viewOutput.$secondNameTextChange)
+			nameTextField.rx.text.orEmpty.bind(to: viewOutput.$firstNameTextChange)
+			secondNameTextField.rx.text.orEmpty.bind(to: viewOutput.$lastNameTextChange)
 			emailTextField.rx.text.orEmpty.bind(to: viewOutput.$emailTextChange)
 			saveUpdateButton.rx.tap.bind(to: viewOutput.$updateProfileButtonTap)
 		}
@@ -144,8 +136,8 @@ extension ProfileEditorViewController: RibStoryboardInstantiatable {}
 extension ProfileEditorViewController {
 	private struct ViewOutput: ProfileEditorViewOutput {
 		@PublishControlEvent var updateProfileButtonTap: ControlEvent<Void>
-		@PublishControlEvent var nameTextChange: ControlEvent<String>
-		@PublishControlEvent var secondNameTextChange: ControlEvent<String>
+		@PublishControlEvent var firstNameTextChange: ControlEvent<String>
+		@PublishControlEvent var lastNameTextChange: ControlEvent<String>
 		@PublishControlEvent var emailTextChange: ControlEvent<String>
 		@PublishControlEvent var retryButtonTap: ControlEvent<Void>
 		@PublishControlEvent var alertButtonTap: ControlEvent<Void>
@@ -155,7 +147,10 @@ extension ProfileEditorViewController {
 // MARK: - Help Method
 
 extension ProfileEditorViewController {
-	@objc private func doneButtonTapped() {
-		view.endEditing(true)
+	private func presentProfileSuccessUpdateAlert() {
+		self.profileSuccessfullyUpdated.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { [weak self] action in
+			self?.viewOutput.$alertButtonTap.accept(Void())
+		}))
+		self.present(self.profileSuccessfullyUpdated, animated: true, completion: nil)
 	}
 }

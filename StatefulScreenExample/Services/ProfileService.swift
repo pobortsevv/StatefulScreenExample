@@ -10,8 +10,11 @@ import RxCocoa
 import RxSwift
 
 protocol ProfileService: AnyObject {
-	var profileEdited: Observable<Profile> { get }
-  func profile(_ completion: @escaping (Result<Profile, Error>) -> Void)
+	// просто Profile
+	var profileChange: Observable<Profile> { get }
+	
+	// -> getProfile
+  func getProfile(_ completion: @escaping (Result<Profile, Error>) -> Void)
 }
 
 struct Profile {

@@ -19,7 +19,7 @@ protocol ProfileEditorBuildable: Buildable {
 // MARK: - Router
 
 protocol ProfileEditorInteractable: Interactable {
-		var router: ProfileEditorRouting? { get set }
+	var router: ProfileEditorRouting? { get set }
 }
 
 protocol ProfileEditorViewControllable: ViewControllable {}
@@ -28,18 +28,16 @@ protocol ProfileEditorViewControllable: ViewControllable {}
 
 protocol ProfileEditorRouting: ViewableRouting {
 	func close()
-		// TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
 }
 
 protocol ProfileEditorPresentable: Presentable {}
-
 
 // MARK: States
 
 enum ProfileEditorInteractorState {
 	case userInput
 	case updatingProfile(profile: Profile)
-	case updateProfileRequestError(error: Error, profile: Profile)
+	case updateProfileError(error: Error, profile: Profile)
 	case routedToProfile
 }
 
@@ -55,7 +53,7 @@ extension ProfileEditorInteractorState: GeneralizableState {
 	}
 
 	public var isLoadingErrorState: Bool {
-		guard case .updateProfileRequestError = self else { return false }
+		guard case .updateProfileError = self else { return false }
 		return true
 	}
 }
@@ -75,22 +73,20 @@ struct ProfileEditorInteractorOutput {
 }
 
 struct ProfileEditorPresenterOutput {
-	let isContentViewVisible: Driver<Bool>
 	let initialLoadingIndicatorVisible: Driver<Bool>
-	let userName: Driver<String>
-	let userSecondName: Driver<String>
+	let firstName: Driver<String>
+	let lastName: Driver<String>
 	let email: Driver<String>
 	let phone: Driver<String>
 	let isEmailValid: Signal<Bool>
 	let profileSuccessfullyEdited: Signal<Bool>
-//	let	isButtonEnable: Driver<Bool>
 	let showError: Signal<ErrorMessageViewModel?>
 }
 
 protocol ProfileEditorViewOutput {
 	var updateProfileButtonTap: ControlEvent<Void> { get }
-	var nameTextChange: ControlEvent<String> { get }
-	var secondNameTextChange: ControlEvent<String> { get }
+	var firstNameTextChange: ControlEvent<String> { get }
+	var lastNameTextChange: ControlEvent<String> { get }
 	var emailTextChange: ControlEvent<String> { get }
 	var retryButtonTap: ControlEvent<Void> { get }
 	var alertButtonTap: ControlEvent<Void> { get }
@@ -99,19 +95,19 @@ protocol ProfileEditorViewOutput {
 // MARK: ScreenDataModel
 
 struct ProfileEditorScreenDataModel {
-	var nameTextField: String
-	var secondNameTextField: String
-	var phoneNumberTextField: String
-	var emailTextField: String
+	var firstNameTextField: String
+	var lastNameTextField: String
+	let phoneNumberTextField: String
+	var emailTextField: String // попробовать переделать на Result<String, Error>
 	var isEmailValid: Bool
 }
 
 extension ProfileEditorScreenDataModel {
-	init(firstName: String?, secondName: String?, phoneNumber: String, email: String?) {
-		nameTextField = (firstName ?? "")
-		secondNameTextField = (secondName ?? "")
-		phoneNumberTextField = phoneNumber
-		emailTextField = (email ?? "")
+	init (profile: Profile) {
+		firstNameTextField = (profile.firstName ?? "")
+		lastNameTextField = (profile.lastName ?? "")
+		phoneNumberTextField = profile.phone
+		emailTextField = (profile.email ?? "")
 		isEmailValid = true
 	}
 }

@@ -10,11 +10,12 @@ import RIBs
 
 final class ProfileEditorRouter: ViewableRouter<ProfileEditorInteractable, ProfileEditorViewControllable>, ProfileEditorRouting {
 	override init(interactor: ProfileEditorInteractable, viewController: ProfileEditorViewControllable) {
-			super.init(interactor: interactor, viewController: viewController)
-			interactor.router = self
+		super.init(interactor: interactor, viewController: viewController)
+		interactor.router = self
 	}
-
+	
 	func close() {
+		// Постараться очистить память модулей, закрытых экранов
 		viewController.uiviewController.navigationController?.popViewController(animated: true)
 	}
 }

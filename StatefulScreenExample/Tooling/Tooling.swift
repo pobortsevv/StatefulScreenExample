@@ -6,6 +6,8 @@
 //  Copyright © 2019 IgnatyevProd. All rights reserved.
 //
 
+import Foundation
+
 public typealias VoidClosure = () -> Void
 
 public protocol Namespace: CaseIterable {}
@@ -94,4 +96,38 @@ public func formatPhone(number: String) -> String {
 	return formatedNumber
 }
 
+extension CharacterSet {
+	/// "0123456789"
+	public static let arabicNumerals = CharacterSet(charactersIn: "0123456789")
+}
+
+extension String {
+	/// Удалятся все символы (Unicode Scalar'ы) кроме символов из указанного CharacterSet. Например все кроме цифр
+	public func removingCharacters(except characterSet: CharacterSet) -> String {
+		let scalars = unicodeScalars.filter(characterSet.contains(_:))
+		return String(scalars)
+	}
+	
+	/// Удалятся все символы (Unicode Scalar'ы), которые соответствуют указанному CharacterSet.
+	/// Например все точки и запятые
+	public func removingCharacters(in characterSet: CharacterSet) -> String {
+		let scalars = unicodeScalars.filter { !characterSet.contains($0) }
+		return String(scalars)
+	}
+	
+	public func compareLenght(with len: Int) -> String {
+		if (self.count > len) {
+			return String(self.prefix(len))
+		}
+		return self
+	}
+	
+	/// Функция генерации  sms кода
+	public static func randomCode() -> String {
+		let len = 5
+		let codeChars = "0123456789"
+		let code = String((0..<len).compactMap{ _ in codeChars.randomElement() })
+		return code
+	}
+}
 

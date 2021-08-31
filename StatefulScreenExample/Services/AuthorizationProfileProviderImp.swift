@@ -11,7 +11,8 @@ import RxCocoa
 
 final class ProfileProviderImp: AuthorizationProfileProvider {
 	private let _profile: BehaviorRelay<Profile>
-	let profileEdited: Observable<Profile>
+	
+	let profileChange: Observable<Profile>
 	
 	private(set) var profile: Profile // = Profile(firstName: nil, lastName: nil, email: nil, phone: "+7 999 123 45 67", authorized: false)
 	
@@ -21,7 +22,7 @@ final class ProfileProviderImp: AuthorizationProfileProvider {
 	init() {
 		profile = Profile(firstName: nil, lastName: nil, email: nil, phone: "+7 999 123 45 67", authorized: false)
 		_profile = BehaviorRelay(value: profile)
-		self.profileEdited = _profile.asObservable()
+		self.profileChange = _profile.asObservable()
 	}
 	
 	func updateProfile(_ profile: Profile, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -44,9 +45,20 @@ final class ProfileProviderImp: AuthorizationProfileProvider {
 		}
 	}
 	
-	func updatePhoneNumber(phoneNumber: String) {
-		self.profile = Profile(firstName: nil, lastName: nil, email: nil, phone: phoneNumber, authorized: true)
-		_profile.accept(profile)
+	func updatePhoneNumber(_ phoneNumber: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + .random(in: 0.1...0.2)) {
+			let isSuccess = Bool.random()
+			let result: Result<Void, Error>
+			switch isSuccess {
+			case false:
+				result = .failure(NetworkError())
+			case true:
+				result = .success(Void())
+				self.profile = Profile(firstName: nil, lastName: nil, email: nil, phone: phoneNumber, authorized: true)
+			}
+			completion(result)
+		}
+		
 	}
 	
 	func checkNumber(_ number: String?, completion: @escaping (Result<String, Error>) -> Void) {
@@ -85,11 +97,10 @@ final class ProfileProviderImp: AuthorizationProfileProvider {
 }
 
 extension ProfileProviderImp: ProfileService {
-	func profile(_ completion: @escaping (Result<Profile, Error>) -> Void) {
+	func getProfile(_ completion: @escaping (Result<Profile, Error>) -> Void) {
 		let result: Result<Profile, Error>
 		if profileRequestsCount == 0 {
 			// При первом запросе на загрузку профиля имитируем ошибку в целях демонстрации
-			
 			result = .failure(NetworkError())
 		} else {
 			result = .success(profile)

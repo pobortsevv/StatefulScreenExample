@@ -14,9 +14,9 @@ final class ValidatorBuilder: Builder<RootDependency>, ValidatorBuildable {
 		let presenter = ValidatorPresenter(phoneNumber: phoneNumber)
 		let interactor = ValidatorInteractor(presenter: presenter, authorizationProvider: dependency.profileProvider, phoneNumber: phoneNumber)
 		interactor.listener = listener
-			
-			VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
 		
-			return ValidatorRouter(interactor: interactor, viewController: viewController)
+		VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
+		
+		return ValidatorRouter(interactor: interactor, viewController: viewController)
 	}
 }

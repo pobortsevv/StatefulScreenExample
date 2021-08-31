@@ -18,6 +18,7 @@ protocol ValidatorBuildable: Buildable {
 
 protocol ValidatorListener: AnyObject {
 	func successAuth()
+	func closedValidatorView()
 }
 
 // MARK: - Router
@@ -31,9 +32,7 @@ protocol ValidatorViewControllable: ViewControllable {}
 
 // MARK: - Interactor
 
-protocol ValidatorRouting: ViewableRouting {
-		// TODO: Declare methods the interactor can invoke to manage sub-tree via the router.
-}
+protocol ValidatorRouting: ViewableRouting {}
 
 protocol ValidatorPresentable: Presentable {}
 
@@ -48,61 +47,67 @@ public enum ValidatorInteractorState {
 
 extension ValidatorInteractorState: GeneralizableState {
 	public var isLoadingState: Bool {
-		guard case .sendingCodeCheckRequest = self else { return false }
-		return true
+		switch self {
+		case .sendingCodeCheckRequest, .updatingProfile:
+			return true
+		case .updatedProfile, .userInput:
+			return false
+		}
 	}
 	
 	public var isDataLoadedState: Bool {
-		guard case .updatingProfile = self else { return false }
+		guard case .updatedProfile = self else { return false }
 		return true
 	}
 	
 	public var isLoadingErrorState: Bool {
-		guard case .sendingCodeCheckRequest = self else { return false }
-		return true
+		guard case .userInput(let error) = self else { return false }
+		return error == nil
 	}
 }
 
 extension ValidatorInteractorState: LoadingIndicatableState {
 	public var shouldLoadingIndicatorBeVisible: Bool {
-		guard case .sendingCodeCheckRequest = self else { return false }
-		return true
+		switch self {
+		case .sendingCodeCheckRequest, .updatingProfile:
+			return true
+		case .updatedProfile, .userInput:
+			return false
+		}
 	}
 }
 
 // MARK: Outputs
 
-// TODO: Заполнить аутпуты
 struct ValidatorInteractorOutput {
 	let state: Observable<ValidatorInteractorState>
 	let screenDataModel: Observable<ValidatorScreenDataModel>
 }
 
 struct ValidatorPresenterOutput {
-	let showNumber: Driver<String>
+	let showNumber: Signal<String>
 	let isContentViewVisible: Driver<Bool>
 
 	let initialLoadingIndicatorVisible: Driver<Bool>
 
-	let code: Driver<String>
+	let code: Driver<String> // переделать на signal (Не получилось, появились баги)
 	let showNetworkError: Signal<String?>
 	let showValidationError: Signal<String?>
 }
 
 protocol ValidatorViewOutput {
 	var codeTextChange: ControlEvent<String> { get }
+	var viewDidDisappear: ControlEvent<Void> { get }
 }
 
 // MARK: ScreenDataModel
 
 struct ValidatorScreenDataModel {
 	var codeTextField: String
-	let phoneNumber: String
 }
 
 extension ValidatorScreenDataModel {
-	init(phoneNumber: String) {
+	init() {
 		codeTextField = ""
-		self.phoneNumber = phoneNumber
 	}
 }

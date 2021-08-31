@@ -16,7 +16,7 @@ extension ViewableRouter {
    */
   public func detachWhenClosed(child: ViewableRouting,
                                disposedBy disposeBag: DisposeBag,
-                               detachAction: (() -> Void)? = nil) {
+                               detachAction: (VoidClosure)? = nil) {
     let vc = child.viewControllable.uiviewController
     vc.viewDidDisappearEvent.subscribe(onNext: { [weak self, weak vc] in
       /**

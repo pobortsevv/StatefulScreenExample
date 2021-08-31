@@ -8,10 +8,9 @@
 
 import RIBs
 
-
 final class ValidatorRouter: ViewableRouter<ValidatorInteractable, ValidatorViewControllable>, ValidatorRouting {
-    override init(interactor: ValidatorInteractable, viewController: ValidatorViewControllable) {
-        super.init(interactor: interactor, viewController: viewController)
-        interactor.router = self
-    }
+	override init(interactor: ValidatorInteractable, viewController: ValidatorViewControllable) {
+		super.init(interactor: interactor, viewController: viewController)
+		interactor.router = self
+	}
 }

@@ -49,8 +49,6 @@ final class MainScreenRouter: ViewableRouter<MainScreenInteractable, MainScreenV
 		let router = authorizationBuilder.build()
 		attachChild(router)
 		viewController.uiviewController.present(router.viewControllable.uiviewController, animated: true)
-//		viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController,
-//																																						 animated: true)
 		detachWhenClosed(child: router, disposedBy: disposeBag)
 	}
 }

@@ -45,11 +45,14 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 	}
 }
 
-// Validator Listener
+// MARK: - Validator Listener
+
 extension AuthorizationInteractor {
+	func closedValidatorView() {
+		externalEvents.$closedValidatorView.accept(Void())
+	}
 	func successAuth() {
 		externalEvents.$successAuth.accept(Void())
-		self.router?.close()
 	}
 }
 
@@ -140,6 +143,11 @@ extension AuthorizationInteractor {
 					routes.routeToValidator(formattedPhone)
 				})
 				.map { code, _ in State.routedToCodeCheck(code: code) }
+				
+				externalEvents.closedValidatorView.filteredByState(trait.readOnlyState) { state in
+					guard case .routedToCodeCheck = state else { return false } ; return true
+				}
+				.map { _ in State.userInput }
 			}.bindToAndDisposedBy(trait: trait)
 		
 			updateScreenDataModel(screenDataModel: screenDataModel, phoneNumberText: phoneNumber, disposeBag: disposeBag)
@@ -190,6 +198,7 @@ extension AuthorizationInteractor {
 	
 	private struct ExternalEvents {
 		@PublishObservable var successAuth: Observable<Void>
+		@PublishObservable var closedValidatorView: Observable<Void>
 	}
 	
 	private struct Requests {
@@ -199,40 +208,5 @@ extension AuthorizationInteractor {
 	private struct Routes {
 		let routeToValidator: (_ phoneNumber: String) -> Void
 		let close: VoidClosure
-	}
-}
-
-extension CharacterSet {
-	/// "0123456789"
-	public static let arabicNumerals = CharacterSet(charactersIn: "0123456789")
-}
-
-extension String {
-	/// Удалятся все символы (Unicode Scalar'ы) кроме символов из указанного CharacterSet. Например все кроме цифр
-	public func removingCharacters(except characterSet: CharacterSet) -> String {
-		let scalars = unicodeScalars.filter(characterSet.contains(_:))
-		return String(scalars)
-	}
-	
-	/// Удалятся все символы (Unicode Scalar'ы), которые соответствуют указанному CharacterSet.
-	/// Например все точки и запятые
-	public func removingCharacters(in characterSet: CharacterSet) -> String {
-		let scalars = unicodeScalars.filter { !characterSet.contains($0) }
-		return String(scalars)
-	}
-	
-	public func compareLenght(with len: Int) -> String {
-		if (self.count > len) {
-			return String(self.prefix(len))
-		}
-		return self
-	}
-	
-	/// Функция генерации  sms кода
-	public static func randomCode() -> String {
-		let len = 5
-		let codeChars = "0123456789"
-		let code = String((0..<len).compactMap{ _ in codeChars.randomElement() })
-		return code
 	}
 }

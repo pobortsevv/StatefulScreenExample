@@ -78,12 +78,11 @@ struct AuthorizationInteractorOutput {
 }
 
 struct AuthorizationPresenterOutput {
-	let showCode: Driver<String>
-	let isContentViewVisible: Driver<Bool>
+	let showCode: Signal<String>
 	
 	let initialLoadingIndicatorVisible: Driver<Bool>
 	
-	let phoneNumber: Driver<String>
+	let phoneNumber: Signal<String>
 	let	isButtonEnable: Driver<Bool>
 	let showError: Signal<ErrorMessageViewModel?>
 }

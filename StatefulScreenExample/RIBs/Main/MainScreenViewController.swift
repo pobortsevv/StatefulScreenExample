@@ -8,35 +8,42 @@
 
 import RIBs
 import RxSwift
+import RxCocoa
 import UIKit
 
 final class MainScreenViewController: UIViewController, MainScreenViewControllable {
   @IBOutlet private weak var stackViewScreenButton: UIButton!
   @IBOutlet private weak var tableViewScreenButton: UIButton!
-	@IBOutlet weak var authorizationButton: UIButton!
+	@IBOutlet private weak var authorizationButton: UIButton!
 	
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    initialSetup()
-  }
-}
-
-extension MainScreenViewController {
-  private func initialSetup() {}
+	private let viewOutput = ViewOutput()
+	private let disposeBag = DisposeBag()
 }
 
 // MARK: - BindableView
 
 extension MainScreenViewController: BindableView {
-  func getOutput() -> MainScreenViewOutput {
-    return MainScreenViewOutput(stackViewButtonTap: stackViewScreenButton.rx.tap,
-                                tableViewButtonTap: tableViewScreenButton.rx.tap,
-																authorizationButtonTap: authorizationButton.rx.tap)
-  }
+	func getOutput() -> MainScreenViewOutput { viewOutput }
 
-  func bindWith(_ input: Empty) {}
+  func bindWith(_ input: Empty) {
+		disposeBag.insert {
+			stackViewScreenButton.rx.tap.bind(to: viewOutput.$stackViewButtonTap)
+			tableViewScreenButton.rx.tap.bind(to: viewOutput.$tableViewButtonTap)
+			authorizationButton.rx.tap.bind(to: viewOutput.$authorizationButtonTap)
+		}
+	}
 }
 
 // MARK: - RibStoryboardInstantiatable
 
 extension MainScreenViewController: RibStoryboardInstantiatable {}
+
+// MARK: - ViewOutput
+
+extension MainScreenViewController {
+	private struct ViewOutput: MainScreenViewOutput {
+		@PublishControlEvent var stackViewButtonTap: ControlEvent<Void>
+		@PublishControlEvent var tableViewButtonTap: ControlEvent<Void>
+		@PublishControlEvent var authorizationButtonTap: ControlEvent<Void>
+	}
+}

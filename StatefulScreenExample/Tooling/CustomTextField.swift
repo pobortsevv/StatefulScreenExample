@@ -8,7 +8,7 @@
 
 import  UIKit
 
-final class FixedTextField: UITextField {
+final class CustomTextField: UITextField {
 	override func textRect(forBounds bounds: CGRect) -> CGRect {
 		textFieldRect(forBounds: bounds)
 	}

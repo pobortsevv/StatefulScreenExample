@@ -18,25 +18,15 @@ extension ProfileEditorPresenter: IOTransformer {
 	func transform(input: ProfileEditorInteractorOutput) -> ProfileEditorPresenterOutput {
 		let state = input.state
 		
-		let isContentViewVisible = state.compactMap { state -> Void? in
-			switch state {
-			case .routedToProfile: return Void()
-			case .userInput, .updateProfileRequestError, .updatingProfile: return nil
-			}
-		}
-		.map { true }
-		.startWith(false)
-		.asDriverIgnoringError()
-		
-		let initialLoadingIndicatorVisible = LoadingIndicatorEvent(state: state)
+		let initialLoadingIndicatorVisible = loadingIndicatorEvent(state: state)
 		
 		let userName = input.screenDataModel.map { screenDataModel in
-			return screenDataModel.nameTextField
+			return screenDataModel.firstNameTextField
 		}
 		.asDriverIgnoringError()
 		
 		let secondName = input.screenDataModel.map { screenDataModel in
-			return screenDataModel.secondNameTextField
+			return screenDataModel.lastNameTextField
 		}
 		.asDriverIgnoringError()
 		
@@ -56,8 +46,8 @@ extension ProfileEditorPresenter: IOTransformer {
 		.asSignalIgnoringError()
 		
 		let showError = state.map { state -> ErrorMessageViewModel? in
-			switch state {
-			case let .updateProfileRequestError(error, _):
+			switch state { // заменить на guard
+			case let .updateProfileError(error, _):
 				return ErrorMessageViewModel(title: error.localizedDescription, buttonTitle: "Повторить")
 			case .userInput, .routedToProfile, .updatingProfile:
 				return nil
@@ -65,19 +55,20 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asSignalIgnoringError()
 		
-		let profileSuccessfullyEdited = state.compactMap { state -> Bool? in
+		let profileSuccessfullyEdited = state.compactMap { state -> Void? in
 			switch state {
-			case .routedToProfile: return true
-			case .userInput, .updatingProfile, .updateProfileRequestError: return nil
+			case .routedToProfile: return Void()
+			case .userInput, .updatingProfile, .updateProfileError: return nil
 				}
 			}
+			.map { true }
 			.distinctUntilChanged()
 			.asSignalIgnoringError()
 		
-		return ProfileEditorPresenterOutput(isContentViewVisible: isContentViewVisible,
-																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
-																				userName: userName,
-																				userSecondName: secondName,
+		return ProfileEditorPresenterOutput(initialLoadingIndicatorVisible:
+																				initialLoadingIndicatorVisible,
+																				firstName: userName,
+																				lastName: secondName,
 																				email: email,
 																				phone: phone,
 																				isEmailValid: isEmailValid,

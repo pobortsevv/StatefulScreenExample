@@ -37,7 +37,7 @@ final class ProfileInteractor: PresentableInteractor<ProfilePresentable>, Profil
   }
   
   private func loadProfile() {
-    profileService.profile { [weak self] result in
+    profileService.getProfile { [weak self] result in
       switch result {
       case .success(let profile): self?.responses.$didLoadProfile.accept(profile)
       case .failure(let error): self?.responses.$profileLoadingError.accept(error)
@@ -57,7 +57,7 @@ extension ProfileInteractor: IOTransformer {
     
     let requests = makeRequests()
 		let routes = makeRoutes()
-		let profileUpdating = profileService.profileEdited
+		let profileUpdating = profileService.profileChange
     
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,

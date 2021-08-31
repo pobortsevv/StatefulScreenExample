@@ -19,20 +19,16 @@ final class ValidatorInteractor: PresentableInteractor<ValidatorPresentable>, Va
 	private let authorizationProvider: AuthorizationProfileProvider
 	
 	private let _state = BehaviorRelay<ValidatorInteractorState>(value: .userInput(error: nil))
-	
 	private let _screenDataModel: BehaviorRelay<ValidatorScreenDataModel>
 	
 	private let responses = Responses()
 
 	private let disposeBag = DisposeBag()
-	// TODO: Add additional dependencies to constructor. Do not perform any logic
-	// in constructor.
+	
 	init(presenter: ValidatorPresentable,
 			 authorizationProvider: AuthorizationProfileProvider,
 			 phoneNumber: String) {
-		 
-		let screenDataModel = ValidatorScreenDataModel(phoneNumber: phoneNumber)
-		_screenDataModel = BehaviorRelay(value: screenDataModel)
+		_screenDataModel = BehaviorRelay(value: ValidatorScreenDataModel())
 		self.authorizationProvider = authorizationProvider
 		self.phoneNumber = phoneNumber
 		super.init(presenter: presenter)
@@ -43,7 +39,6 @@ final class ValidatorInteractor: PresentableInteractor<ValidatorPresentable>, Va
 			switch result {
 			case .success:
 				self?.responses.$correctCode.accept(true)
-				self?.responses.$updatedProfile.accept(Void())
 			case .failure(let error):
 				switch error {
 				case .validationError: self?.responses.$validationError.accept(error)
@@ -51,6 +46,17 @@ final class ValidatorInteractor: PresentableInteractor<ValidatorPresentable>, Va
 				}
 			}
 		})
+	}
+	
+	private func updateProfile(phoneNumber: String) {
+		authorizationProvider.updatePhoneNumber(phoneNumber) { [weak self] result in
+			switch result {
+			case .success:
+				self?.responses.$updatedProfile.accept(Void())
+			case .failure(let error):
+				self?.responses.$updatingError.accept(error)
+			}
+		}
 	}
 }
 
@@ -67,8 +73,12 @@ extension ValidatorInteractor: IOTransformer {
 					.prefix(5)
 				return String(_code)
 			}
-		
+
 		let requests = makeRequests()
+		
+		viewOutput.viewDidDisappear
+			.subscribe(onNext: { self.listener?.closedValidatorView() })
+			.disposed(by: disposeBag)
 		
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,
@@ -121,13 +131,22 @@ extension ValidatorInteractor {
 				
 				responses.validationError
 					.filteredByState(trait.readOnlyState, filter: bySendingCodeCheckRequestState)
-					.map { error in State.userInput(error: error) }
+			 		.map { error in State.userInput(error: error) }
 				
 				// SendingCodeRequest -> UpdateProfile
 				responses.correctCode
 					.filteredByState(trait.readOnlyState, filter: bySendingCodeCheckRequestState)
-					.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
-					.do(afterNext: { _, number in requests.updateProfilePhoneNumber(number.phoneNumber)})
+					.do(afterNext: { _ in requests.updateProfilePhoneNumber() })
+					.map {_ in State.updatingProfile}
+				
+				// UpdateProfile -> sendingCodeRequest
+				/// Просто заглушка ошибки, которую может прислать провайдер на запрос об обновлении профиля
+				/// В данном случае мы просто продолжаем обновлять профиль до success-а
+				responses.updatingError
+					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
+						guard case .updatingProfile = state else { return false }; return true
+					})
+					.do(afterNext: { _ in requests.updateProfilePhoneNumber() })
 					.map {_ in State.updatingProfile}
 				
 				// UpdateProfile -> close
@@ -136,11 +155,10 @@ extension ValidatorInteractor {
 						guard case .updatingProfile = state else { return false }; return true
 					})
 					.observe(on: MainScheduler.instance)
-					.do(afterNext: { listener?.successAuth()})
-					.map { _ in State.updatedProfile}
-				
-				
-			}.bindToAndDisposedBy(trait: trait)
+					.do(afterNext: { listener?.successAuth() })
+					.map { State.updatedProfile}
+			}
+			.bindToAndDisposedBy(trait: trait)
 
 			updateScreenDataModel(screenDataModel: screenDataModel, codeText: code, disposeBag: disposeBag)
 		}
@@ -165,7 +183,9 @@ extension ValidatorInteractor {
 extension ValidatorInteractor {
 	private func makeRequests() -> Requests {
 		Requests(checkCode: { [weak self] code in self?.checkCode(code: code) },
-						 updateProfilePhoneNumber: { [weak self] phoneNumber in self?.authorizationProvider.updatePhoneNumber(phoneNumber: phoneNumber)})
+						 updateProfilePhoneNumber: { [weak self] in
+							guard let self = self else { return }
+							self.updateProfile(phoneNumber: self.phoneNumber)})
 	}
 }
 
@@ -174,13 +194,15 @@ extension ValidatorInteractor {
 extension ValidatorInteractor {
 	private struct Responses {
 		@PublishObservable var correctCode: Observable<Bool>
-		@PublishObservable var updatedProfile: Observable<Void>
 		@PublishObservable var networkError: Observable<AuthError>
 		@PublishObservable var validationError: Observable<AuthError>
+		
+		@PublishObservable var updatedProfile: Observable<Void>
+		@PublishObservable var updatingError: Observable<Error>
 	}
 	
 	private struct Requests {
 		let checkCode: (_ code: String) -> Void
-		let updateProfilePhoneNumber: (_ phoneNumber: String) -> Void
+		let updateProfilePhoneNumber: VoidClosure
 	}
 }

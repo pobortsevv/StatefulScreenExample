@@ -29,6 +29,10 @@ final class ValidatorViewController: UIViewController, ValidatorViewControllable
 		super.viewDidLoad()
 		initailSetup()
 	}
+	override func viewDidDisappear(_ animated: Bool) {
+		super.viewDidDisappear(animated)
+		viewOutput.$viewDidDisappear.accept(Void())
+	}
 }
 
 extension ValidatorViewController {
@@ -36,7 +40,8 @@ extension ValidatorViewController {
 		title = "Подтверждение кода"
 		
 		codeTextField.layer.cornerRadius = 12
-		codeErrorLabel.text = ""
+		codeTextField.becomeFirstResponder()
+		codeErrorLabel.text = nil
 		
 		view.addStretchedToBounds(subview: loadingIndicatorView)
 		loadingIndicatorView.isVisible = false
@@ -52,21 +57,27 @@ extension ValidatorViewController: BindableView {
 																								 loadingIndicatorView.indicatorView.rx.isAnimating)
 			
 			input.code.drive(codeTextField.rx.text)
-			input.showNumber.drive(phoneNumberLabel.rx.text)
+			input.showNumber.emit(onNext: { [weak self] number in
+				guard case self = self else { return }
+				self?.phoneNumberLabel.text = number
+			})
 			
 			input.showNetworkError.emit(onNext: { [weak self] error in
-				if let error = error {
-					self?.networkErrorLabel.text = error
-					self?.networkErrorLabel.textColor = .red
-					self?.codeTextField.text = nil
+				guard let self = self else { return }
+				self.networkErrorLabel.text = error != nil ? error : "Введите код из смс, отправленного на номер"
+				self.networkErrorLabel.textColor = error != nil ? .red : .lightGray
+				if error != nil {
+					self.codeTextField.text = nil
 				}
 			})
 			
 			input.showValidationError.emit(onNext: { [weak self] error in
-				if let error = error {
-					self?.codeErrorLabel.text = error
-					self?.codeErrorLabel.textColor = .red
-					self?.codeTextField.text = nil
+				guard let self = self else { return }
+				self.codeErrorLabel.isHidden = error != nil ? false : true
+				self.codeErrorLabel.text = error
+				if error != nil {
+					self.codeTextField.text = nil
+					self.codeErrorLabel.textColor = .red
 				}
 			})
 			
@@ -78,6 +89,7 @@ extension ValidatorViewController: BindableView {
 extension ValidatorViewController {
 	private struct ViewOutput: ValidatorViewOutput {
 		@PublishControlEvent var codeTextChange: ControlEvent<String>
+		@PublishControlEvent var viewDidDisappear: ControlEvent<Void>
 	}
 }
 

@@ -56,7 +56,7 @@ public func refreshLoadingIndicatorEvents<State: GeneralizableState & LoadingInd
 
 /// Тоже самое только без pull-to-refresh
 
-public func LoadingIndicatorEvent<State: GeneralizableState & LoadingIndicatableState>(state: Observable<State>)
+public func loadingIndicatorEvent<State: GeneralizableState & LoadingIndicatableState>(state: Observable<State>)
 	-> Driver<Bool> {
 		let didLoadData = state
 			.map { state -> Void? in

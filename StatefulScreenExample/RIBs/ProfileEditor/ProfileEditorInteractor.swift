@@ -20,7 +20,6 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 	// MARK: Internals
 	
 	private let _state = BehaviorRelay<ProfileEditorInteractorState>(value: .userInput)
-	
 	private let _screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>
 	
 	private let responses = Responses()
@@ -32,10 +31,7 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 			 profileProvider: AuthorizationProfileProvider,
 			 profile: Profile) {
 		self.profileProvider = profileProvider
-		let screenDataModel = ProfileEditorScreenDataModel(firstName: profile.firstName,
-																											 secondName: profile.lastName,
-																											 phoneNumber: profile.phone,
-																											 email: profile.email)
+		let screenDataModel = ProfileEditorScreenDataModel(profile: profile)
 		_screenDataModel = BehaviorRelay(value: screenDataModel)
 		super.init(presenter: presenter)
 	}
@@ -49,7 +45,7 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 		}
 	}
 	
-	private func checkEmail(email: String) -> Bool {
+	private func checkEmail(_ email: String) -> Bool {
 		if email != "" {
 			if email.contains("@") == false || email.firstIndex(of: "@") != email.lastIndex(of: "@") {
 				emailValidation.$isValid.accept(false)
@@ -66,15 +62,14 @@ extension ProfileEditorInteractor: IOTransformer {
 	func transform(input viewOutput: ProfileEditorViewOutput) -> ProfileEditorInteractorOutput {
 		let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
 		
-		let refinedName = viewOutput.nameTextChange
+		let refinedName = viewOutput.firstNameTextChange
 			.map { name -> String in
-				let _name = name
-					.removingCharacters(except: .letters)
+				let _name = name.removingCharacters(except: .letters)
 				
 				return String(_name)
 			}
 		
-		let refinedSecondName = viewOutput.secondNameTextChange
+		let refinedSecondName = viewOutput.lastNameTextChange
 			.map { secondName -> String in
 				let _secondName = secondName
 					.removingCharacters(except: .letters)
@@ -92,8 +87,6 @@ extension ProfileEditorInteractor: IOTransformer {
 		
 		let requests = makeRequests()
 		let routes = makeRoutes()
-		let validationEmailRequests = makeValidationEmailRequests()
-		
 		
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,
@@ -102,14 +95,28 @@ extension ProfileEditorInteractor: IOTransformer {
 														 email: refinedEmail,
 														 response: responses,
 														 requests: requests,
-														 validationEmailRequests: validationEmailRequests,
-														 routes: routes,
+														 checkEmail: self.checkEmail(_:),
 														 emailValidation: emailValidation,
 														 screenDataModel: _screenDataModel,
 														 disposeBag: disposeBag)
 		
+		bindStatefulRouting(viewOutput, trait: trait, routes: routes)
+		
 		return ProfileEditorInteractorOutput(state: trait.readOnlyState,
 																				 screenDataModel: _screenDataModel.asObservable())
+	}
+	
+	private func bindStatefulRouting(_ viewOutput: ProfileEditorViewOutput,
+																	 trait: StateTransformTrait<State>,
+																	 routes: Routes) {
+		viewOutput.alertButtonTap
+			.filteredByState(trait.readOnlyState, filter: { state -> Bool in
+				guard case .routedToProfile = state else { return false }; return true
+			})
+			.observe(on: MainScheduler.instance)
+			.subscribe(onNext: routes.close)
+			.disposed(by: disposeBag)
+		
 	}
 }
 
@@ -135,38 +142,37 @@ extension ProfileEditorInteractor {
 													email: Observable<String>,
 													response: Responses,
 													requests: Requests,
-													validationEmailRequests: ValidateEmail,
-													routes: Routes,
+													checkEmail: @escaping (_ email: String) -> Bool,
 													emailValidation: EmailValidation,
 													screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 													disposeBag: DisposeBag) {
 			StateTransform.transitions {
 				// UserInput -> UpdatingProfile
 				viewOutput.updateProfileButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
-					.withLatestFrom(screenDataModel.asObservable(), resultSelector: { ($0, $1) })
-					.filter { _, text -> Bool in validationEmailRequests.checkEmail(text.emailTextField)}
-					.do(afterNext: { _, text in
-						requests.updateProfile(Profile(firstName: text.nameTextField,
-																					 lastName: text.secondNameTextField,
+					.withLatestFrom(screenDataModel.asObservable())
+					.filter { text -> Bool in checkEmail(text.emailTextField)}
+					.do(afterNext: { text in
+						requests.updateProfile(Profile(firstName: text.firstNameTextField,
+																					 lastName: text.lastNameTextField,
 																					 email: text.emailTextField,
 																					 phone: text.phoneNumberTextField,
 																					 authorized: true))
 					})
-					.map { _, text in State.updatingProfile(profile: Profile(firstName: text.nameTextField,
-																																	 lastName: text.secondNameTextField,
-																																	 email: text.emailTextField,
-																																	 phone: text.phoneNumberTextField,
-																																	 authorized: true))}
+					.map { text in State.updatingProfile(profile: Profile(firstName: text.firstNameTextField,
+																																lastName: text.lastNameTextField,
+																																email: text.emailTextField,
+																																phone: text.phoneNumberTextField,
+																																authorized: true))}
 				
 				// UpdatingProfile -> UpdateProfileRequestError
 				response.updateError
 					.filteredByState(trait.readOnlyState, filterMap: byUpdatingProfileState)
-					.map { error, profile in State.updateProfileRequestError(error: error, profile: profile) }
+					.map { error, profile in State.updateProfileError(error: error, profile: profile) }
 				
 				// UpdateProfileRequestError -> UpdatingProfile
 				viewOutput.retryButtonTap.filteredByState(trait.readOnlyState, filterMap: { state -> Profile? in
-					guard case let .updateProfileRequestError(_, profile) = state else { return nil }; return profile
-				} )
+					guard case let .updateProfileError(_, profile) = state else { return nil }; return profile
+				})
 				.do(afterNext: requests.updateProfile)
 				.map { profile in State.updatingProfile(profile: profile) }
 				
@@ -174,15 +180,6 @@ extension ProfileEditorInteractor {
 				response.profileUpdated
 					.filteredByState(trait.readOnlyState, filterMap: byUpdatingProfileState)
 					.map { _ in State.routedToProfile}
-				
-				viewOutput.alertButtonTap
-					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
-						guard case .routedToProfile = state else { return false }; return true
-					})
-				.observe(on: MainScheduler.instance)
-				.do(afterNext: routes.close)
-				.map { _ in State.routedToProfile}
-				
 			}.bindToAndDisposedBy(trait: trait)
 			
 			updateScreenDataModel(emailValidation: emailValidation,
@@ -202,36 +199,35 @@ extension ProfileEditorInteractor {
 																			disposeBag: DisposeBag) {
 			let readOnlyScreenDataModel = screenDataModel.asObservable()
 			
-			disposeBag.insert {
+			Observable<ProfileEditorScreenDataModel>.merge {
 				emailValidation.isValid
 					.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { isValid, screenDataModel in
 						mutate(value: screenDataModel, mutation: { $0.isEmailValid = isValid})
 					}
-					.bind(to: screenDataModel)
 				
 				nameText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { name, screenDataModel in
-						mutate(value: screenDataModel, mutation: { $0.nameTextField = name } )
+						mutate(value: screenDataModel, mutation: { $0.firstNameTextField = name } )
 					}
-					.bind(to: screenDataModel)
+				
 				secondNameText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { secondName, screenDataModel in
-						mutate(value: screenDataModel, mutation: { $0.secondNameTextField = secondName } )
+						mutate(value: screenDataModel, mutation: { $0.lastNameTextField = secondName } )
 					}
-					.bind(to: screenDataModel)
+				
 				emailText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { email, screenDataModel in
 						mutate(value: screenDataModel, mutation: { $0.emailTextField = email } )
 					}
-					.bind(to: screenDataModel)
+				
 				emailText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { email, screenDataModel in
 						mutate(value: screenDataModel, mutation: { $0.isEmailValid = true } )
 					}
-					.bind(to: screenDataModel)
 			}
-			
+			.bind(to: screenDataModel)
+			.disposed(by: disposeBag)
 		}
 	}
 }
@@ -245,10 +241,6 @@ extension ProfileEditorInteractor {
 	
 	private func makeRoutes() -> Routes {
 		Routes(close: { [weak self] in self?.router?.close()} )
-	}
-	
-	private func makeValidationEmailRequests() -> ValidateEmail {
-		ValidateEmail(checkEmail: { [weak self] email in (self?.checkEmail(email: email))!})
 	}
 }
 
@@ -268,15 +260,7 @@ extension ProfileEditorInteractor {
 		let updateProfile: (_ profile: Profile) -> Void
 	}
 	
-	private struct ValidateEmail {
-		let checkEmail: (_ email: String) -> Bool
-	}
-	
 	private struct Routes {
-		let close: () -> Void
-	}
-	
-	struct ValidationEmailError: LocalizedError {
-		var errorDescription: String? { "Введен неверный email" }
+		let close: VoidClosure
 	}
 }

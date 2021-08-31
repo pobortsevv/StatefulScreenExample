@@ -34,8 +34,8 @@ protocol MainScreenRouting: ViewableRouting {
 
 // MARK: Outputs
 
-struct MainScreenViewOutput {
-  let stackViewButtonTap: ControlEvent<Void>
-  let tableViewButtonTap: ControlEvent<Void>
-	let authorizationButtonTap: ControlEvent<Void>
+protocol MainScreenViewOutput {
+	var stackViewButtonTap: ControlEvent<Void> { get }
+	var tableViewButtonTap: ControlEvent<Void> { get }
+	var authorizationButtonTap: ControlEvent<Void> { get }
 }

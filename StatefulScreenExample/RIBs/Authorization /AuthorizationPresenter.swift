@@ -20,17 +20,7 @@ extension AuthorizationPresenter: IOTransformer {
 		
 		let showCode = Helper.showCode(state)
 		
-		let isContentViewVisible = state.compactMap { state -> Void? in
-			switch state {
-			case .routedToCodeCheck: return Void()//routeToValidator()
-			case .userInput, .smsCodeRequestError, .sendingSMSCodeRequest: return nil
-			}
-		}
-		.map { true }
-		.startWith(false)
-		.asDriverIgnoringError()
-		
-		let initialLoadingIndicatorVisible = LoadingIndicatorEvent(state: state)
+		let initialLoadingIndicatorVisible = loadingIndicatorEvent(state: state)
 		
 		let showError = state.map { state -> ErrorMessageViewModel? in
 			switch state {
@@ -45,15 +35,15 @@ extension AuthorizationPresenter: IOTransformer {
 		let phoneNumber = input.screenDataModel.map { screenDataModel -> String in
 			return formatPhone(number: screenDataModel.phoneNumberTextField)
 		}
-		.asDriverIgnoringError()
+		.asSignalIgnoringError()
 		
 		let buttonAvailability = input.screenDataModel.map { screenDataModel -> Bool in
 			return screenDataModel.phoneNumberTextField.count == 11
 		}
+		.distinctUntilChanged()
 		.asDriverIgnoringError()
 		
 		return AuthorizationPresenterOutput(showCode: showCode,
-																				isContentViewVisible: isContentViewVisible,
 																				initialLoadingIndicatorVisible: initialLoadingIndicatorVisible,
 																				phoneNumber: phoneNumber,
 																				isButtonEnable: buttonAvailability,
@@ -63,7 +53,7 @@ extension AuthorizationPresenter: IOTransformer {
 
 extension AuthorizationPresenter {
 	private enum Helper: Namespace {
-		static func showCode(_ state: Observable<AuthorizationInteractorState>) -> Driver<String> {
+		static func showCode(_ state: Observable<AuthorizationInteractorState>) -> Signal<String> {
 			return state.compactMap { state -> String? in
 				switch state {
 				case let .routedToCodeCheck(code):
@@ -73,7 +63,7 @@ extension AuthorizationPresenter {
 				}
 			}
 			.distinctUntilChanged()
-			.asDriverIgnoringError()
+			.asSignalIgnoringError()
 		}
 	}
 }
