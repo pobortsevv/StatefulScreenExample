@@ -80,7 +80,7 @@ extension ProfileEditorViewController: BindableView {
 			input.phone.drive(phoneNumberTextField.rx.text)
 			input.email.drive(emailTextField.rx.text)
 			
-			input.profileSuccessfullyEdited.emit(onNext: { _ in self.presentProfileSuccessUpdateAlert() } )
+			input.profileSuccessfullyEdited.emit(onNext: { [weak self] _ in self?.presentProfileSuccessUpdateAlert() } )
 			
 			input.isEmailValid.emit(onNext: { [weak self] isValid in
 				guard let self = self else { return }
@@ -91,14 +91,15 @@ extension ProfileEditorViewController: BindableView {
 				self.emailTextField.layer.borderWidth = isValid ? 0 : 1
 			})
 			
-			input.showError.emit(onNext: { [unowned self] maybeViewModel in
+			input.showError.emit(onNext: { [weak self] maybeViewModel in
+				guard let self = self else { return }
 				self.errorMessageView.isVisible = (maybeViewModel != nil)
 		
 				if let viewModel = maybeViewModel {
 					self.errorMessageView.resetToEmptyState()
 
-					self.errorMessageView.setTitle(viewModel.title, buttonTitle: viewModel.buttonTitle, action: {
-						self.viewOutput.$retryButtonTap.accept(Void())
+					self.errorMessageView.setTitle(viewModel.title, buttonTitle: viewModel.buttonTitle, action: { [weak self] in
+						self?.viewOutput.$retryButtonTap.accept(Void())
 					})
 				}
 			})

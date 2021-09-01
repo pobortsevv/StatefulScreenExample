@@ -47,7 +47,7 @@ final class ErrorMessageView: UIView, ResetableView {
   }
   
   private func initialSetup() {
-    backgroundColor = UIColor.gray.withAlphaComponent(0.9)
+    backgroundColor = UIColor.gray
     
     button.translatesAutoresizingMaskIntoConstraints = false
     button.backgroundColor = .yellowMain
