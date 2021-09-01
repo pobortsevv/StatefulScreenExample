@@ -21,7 +21,6 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 	private let _screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>
 	
 	private let responses = Responses()
-	private let emailValidation = EmailValidation()
 	
 	private let disposeBag = DisposeBag()
 	
@@ -42,16 +41,6 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 			}
 		}
 	}
-	
-	private func checkEmail(_ email: String) -> Bool {
-		if email != "" {
-			if email.contains("@") == false || email.firstIndex(of: "@") != email.lastIndex(of: "@") {
-				emailValidation.$isValid.accept(false)
-				return false
-			}
-		}
-		return true
-	}
 }
 
 // MARK: - IOTransformer
@@ -67,8 +56,6 @@ extension ProfileEditorInteractor: IOTransformer {
 														 viewOutput: viewOutput,
 														 response: responses,
 														 requests: requests,
-														 checkEmail: self.checkEmail(_:),
-														 emailValidation: emailValidation,
 														 screenDataModel: _screenDataModel,
 														 disposeBag: disposeBag)
 		
@@ -111,8 +98,6 @@ extension ProfileEditorInteractor {
 													viewOutput: ProfileEditorViewOutput,
 													response: Responses,
 													requests: Requests,
-													checkEmail: @escaping (_ email: String) -> Bool,
-													emailValidation: EmailValidation,
 													screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 													disposeBag: DisposeBag) {
 			
@@ -143,19 +128,20 @@ extension ProfileEditorInteractor {
 				// UserInput -> UpdatingProfile
 				viewOutput.updateProfileButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
 					.withLatestFrom(screenDataModel.asObservable())
-					.filter { text -> Bool in checkEmail(text.emailTextField)}
-					.do(afterNext: { text in
-						requests.updateProfile(Profile(firstName: text.firstNameTextField,
-																					 lastName: text.lastNameTextField,
-																					 email: text.emailTextField,
-																					 phone: text.phoneNumberTextField,
-																					 authorized: true))
-					})
-					.map { text in State.updatingProfile(profile: Profile(firstName: text.firstNameTextField,
-																																lastName: text.lastNameTextField,
-																																email: text.emailTextField,
-																																phone: text.phoneNumberTextField,
-																																authorized: true))}
+					.compactMap { screenDataModel -> Profile? in
+						switch screenDataModel.email {
+						case .success(let email):
+							return Profile(firstName: screenDataModel.firstNameTextField,
+														 lastName: screenDataModel.lastNameTextField,
+														 email: email,
+														 phone: screenDataModel.phoneNumberTextField,
+														 authorized: true)
+						case .failure:
+							return nil
+						}
+					}
+					.do(afterNext: requests.updateProfile)
+					.map { profile in State.updatingProfile(profile: profile)}
 				
 				// UpdatingProfile -> UpdateProfileRequestError
 				response.updateError
@@ -175,8 +161,7 @@ extension ProfileEditorInteractor {
 					.map { _ in State.routedToProfile}
 			}.bindToAndDisposedBy(trait: trait)
 			
-			updateScreenDataModel(emailValidation: emailValidation,
-														screenDataModel: screenDataModel,
+			updateScreenDataModel(screenDataModel: screenDataModel,
 														nameText: name,
 														secondNameText: secondName,
 														emailText: email,
@@ -184,8 +169,7 @@ extension ProfileEditorInteractor {
 			
 		}
 		
-		static func updateScreenDataModel(emailValidation: EmailValidation,
-																			screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
+		static func updateScreenDataModel(screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 																			nameText: Observable<String>,
 																			secondNameText: Observable<String>,
 																			emailText: Observable<String>,
@@ -193,12 +177,6 @@ extension ProfileEditorInteractor {
 			let readOnlyScreenDataModel = screenDataModel.asObservable()
 			
 			Observable<ProfileEditorScreenDataModel>.merge {
-				emailValidation.isValid
-					.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
-					.map { isValid, screenDataModel in
-						mutate(value: screenDataModel, mutation: { $0.isEmailValid = isValid})
-					}
-				
 				nameText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { name, screenDataModel in
 						mutate(value: screenDataModel, mutation: { $0.firstNameTextField = name } )
@@ -211,12 +189,7 @@ extension ProfileEditorInteractor {
 				
 				emailText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
 					.map { email, screenDataModel in
-						mutate(value: screenDataModel, mutation: { $0.emailTextField = email } )
-					}
-				
-				emailText.withLatestFrom(readOnlyScreenDataModel, resultSelector: { ($0, $1) })
-					.map { email, screenDataModel in
-						mutate(value: screenDataModel, mutation: { $0.isEmailValid = true } )
+						screenDataModel.copy(email: email)
 					}
 			}
 			.bind(to: screenDataModel)
@@ -243,10 +216,6 @@ extension ProfileEditorInteractor {
 	private struct Responses {
 		@PublishObservable var profileUpdated: Observable<Void>
 		@PublishObservable var updateError: Observable<Error>
-	}
-	
-	private struct EmailValidation {
-		@PublishObservable var isValid: Observable<Bool>
 	}
 	
 	private struct Requests {

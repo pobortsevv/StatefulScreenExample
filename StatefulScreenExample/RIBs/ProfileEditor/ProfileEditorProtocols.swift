@@ -79,7 +79,7 @@ struct ProfileEditorPresenterOutput {
 	let lastName: Driver<String>
 	let email: Driver<String>
 	let phone: Driver<String>
-	let isEmailValid: Signal<Bool>
+	let emailValidationError: Signal<String?>
 	let profileSuccessfullyEdited: Signal<Bool>
 	let showError: Signal<ErrorMessageViewModel?>
 }
@@ -96,11 +96,20 @@ protocol ProfileEditorViewOutput {
 // MARK: ScreenDataModel
 
 struct ProfileEditorScreenDataModel {
+	private let emailTextField: String
+	
 	var firstNameTextField: String
 	var lastNameTextField: String
 	let phoneNumberTextField: String
-	var emailTextField: String
-	var isEmailValid: Bool
+	let email: Result<String?, EmailValidationError>
+	
+	init(firstNameText: String, lastNameText: String, phoneNumberText: String, emailText: String?) {
+		firstNameTextField = firstNameText
+		lastNameTextField = lastNameText
+		phoneNumberTextField = phoneNumberText
+		emailTextField = emailText ?? ""
+		email = Self.checkEmail(emailTextField)
+	}
 }
 
 extension ProfileEditorScreenDataModel {
@@ -109,11 +118,27 @@ extension ProfileEditorScreenDataModel {
 		lastNameTextField = (profile.lastName ?? "")
 		phoneNumberTextField = profile.phone
 		emailTextField = (profile.email ?? "")
-		isEmailValid = true
+		email = Self.checkEmail(emailTextField)
 	}
 	
-//	init (email: String) {
-//
-//	}
+	func copy(email: String?) -> Self {
+		Self(firstNameText: firstNameTextField,
+				 lastNameText: lastNameTextField,
+				 phoneNumberText: phoneNumberTextField,
+				 emailText: email)
+	}
+	
+	private static func checkEmail(_ email: String) -> Result<String?, EmailValidationError> {
+		guard !email.isEmpty else { return .success(nil) }
+		
+			if email.contains("@") == false || email.firstIndex(of: "@") != email.lastIndex(of: "@") {
+				return .failure(.emailNotValid)
+			} else {
+				return .success(email)
+		}
+	}
 }
 
+enum EmailValidationError: Error {
+	case emailNotValid
+}

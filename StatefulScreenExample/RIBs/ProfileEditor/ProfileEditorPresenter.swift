@@ -35,13 +35,19 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asDriverIgnoringError()
 		
-		let email = input.screenDataModel.map { screenDataModel in
-			return screenDataModel.emailTextField
+		let email = input.screenDataModel.compactMap { screenDataModel -> String? in
+			switch screenDataModel.email {
+			case .success(let email): return email
+			case .failure: return nil
+			}
 		}
 		.asDriverIgnoringError()
 		
-		let isEmailValid = input.screenDataModel.map { screenDataModel in
-			return screenDataModel.isEmailValid
+		let emailValidationError = input.screenDataModel.map { screenDataModel -> String? in
+			switch screenDataModel.email {
+			case .success: return nil
+			case .failure: return "Введен неверный email"
+			}
 		}
 		.asSignalIgnoringError()
 		
@@ -71,7 +77,7 @@ extension ProfileEditorPresenter: IOTransformer {
 																				lastName: secondName,
 																				email: email,
 																				phone: phone,
-																				isEmailValid: isEmailValid,
+																				emailValidationError: emailValidationError,
 																				profileSuccessfullyEdited: profileSuccessfullyEdited,
 																				showError: showError)
 	}

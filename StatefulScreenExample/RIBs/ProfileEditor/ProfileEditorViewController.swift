@@ -82,14 +82,16 @@ extension ProfileEditorViewController: BindableView {
 			
 			input.profileSuccessfullyEdited.emit(onNext: { [weak self] _ in self?.presentProfileSuccessUpdateAlert() } )
 			
-			input.isEmailValid.emit(onNext: { [weak self] isValid in
-				guard let self = self else { return }
-				self.emailValidationErrorLabel.isVisible = isValid ? false : true
-				self.emailTextField.textColor = isValid ? .black : .red
-				self.emailValidationErrorLabel.textColor = isValid ? .black : .red
-				self.emailTextField.layer.borderColor = isValid ? nil : UIColor.red.cgColor
-				self.emailTextField.layer.borderWidth = isValid ? 0 : 1
-			})
+			input.emailValidationError
+				.do(onNext: { [weak self] error in
+					let notValid = error != nil
+					self?.emailValidationErrorLabel.isVisible = notValid ? true : false
+					self?.emailTextField.textColor = notValid ? .red : .black
+					self?.emailValidationErrorLabel.textColor = notValid ? .red : .black
+					self?.emailTextField.layer.borderColor = notValid ? UIColor.red.cgColor : nil
+					self?.emailTextField.layer.borderWidth = notValid ? 1 : 0
+				})
+				.emit(to: emailValidationErrorLabel.rx.text)
 			
 			input.showError.emit(onNext: { [weak self] maybeViewModel in
 				guard let self = self else { return }
