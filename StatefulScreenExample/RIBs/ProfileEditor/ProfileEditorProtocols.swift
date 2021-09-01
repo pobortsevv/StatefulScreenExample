@@ -71,6 +71,7 @@ extension ProfileEditorInteractorState: LoadingIndicatableState {
 struct ProfileEditorInteractorOutput {
 	let state: Observable<ProfileEditorInteractorState>
 	let screenDataModel: Observable<ProfileEditorScreenDataModel>
+	var updateProfileButtonTap: ControlEvent<Void>
 }
 
 struct ProfileEditorPresenterOutput {

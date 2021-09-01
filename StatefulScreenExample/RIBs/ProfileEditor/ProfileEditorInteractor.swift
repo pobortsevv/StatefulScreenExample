@@ -62,7 +62,8 @@ extension ProfileEditorInteractor: IOTransformer {
 		ProfileEditorInteractor.bindStatefulRouting(viewOutput, trait: trait, routes: routes)
 		
 		return ProfileEditorInteractorOutput(state: trait.readOnlyState,
-																				 screenDataModel: _screenDataModel.asObservable())
+																				 screenDataModel: _screenDataModel.asObservable(),
+																				 updateProfileButtonTap: viewOutput.updateProfileButtonTap)
 	}
 	
 	static private func bindStatefulRouting(_ viewOutput: ProfileEditorViewOutput,

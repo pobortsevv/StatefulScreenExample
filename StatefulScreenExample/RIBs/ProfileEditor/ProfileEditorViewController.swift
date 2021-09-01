@@ -61,6 +61,7 @@ extension ProfileEditorViewController {
 		nameTextField.inputAccessoryView = toolbar
 		secondNameTextField.inputAccessoryView = toolbar
 		emailTextField.inputAccessoryView = toolbar
+		emailValidationErrorLabel.isVisible = false
 	}
 	
 	@objc private func doneButtonTapped() {

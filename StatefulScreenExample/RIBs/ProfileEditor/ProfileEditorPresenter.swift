@@ -35,6 +35,8 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asDriverIgnoringError()
 		
+		
+		
 		let email = input.screenDataModel.compactMap { screenDataModel -> String? in
 			switch screenDataModel.email {
 			case .success(let email): return email
@@ -43,13 +45,24 @@ extension ProfileEditorPresenter: IOTransformer {
 		}
 		.asDriverIgnoringError()
 		
-		let emailValidationError = input.screenDataModel.map { screenDataModel -> String? in
-			switch screenDataModel.email {
-			case .success: return nil
-			case .failure: return "Введен неверный email"
+		let emailValidationError = Observable<String?>.merge {
+			input.screenDataModel
+				.map { screenDataModel -> String? in
+					switch screenDataModel.email {
+					case .failure, .success: return nil
+					}
+				}
+			
+			input.updateProfileButtonTap
+				.withLatestFrom(input.screenDataModel.asObservable())
+				.map { screenDataModel -> String? in
+					switch screenDataModel.email {
+					case .success: return nil
+					case .failure: return "Введен неверный email"
+					}
+				}
 			}
-		}
-		.asSignalIgnoringError()
+			.asSignalIgnoringError()
 		
 		let showError = state.map { state -> ErrorMessageViewModel? in
 			switch state {
