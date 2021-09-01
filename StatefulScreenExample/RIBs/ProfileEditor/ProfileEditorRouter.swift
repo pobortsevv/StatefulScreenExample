@@ -15,7 +15,6 @@ final class ProfileEditorRouter: ViewableRouter<ProfileEditorInteractable, Profi
 	}
 	
 	func close() {
-		// Постараться очистить память модулей, закрытых экранов
 		viewController.uiviewController.navigationController?.popViewController(animated: true)
 	}
 }

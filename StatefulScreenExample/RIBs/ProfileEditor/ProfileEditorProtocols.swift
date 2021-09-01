@@ -13,6 +13,7 @@ import RxSwift
 // MARK: - Builder
 
 protocol ProfileEditorBuildable: Buildable {
+	/// ProfileEditor - модуль для редактирования аккаунта пользователя
 	func build(profile: Profile) -> ProfileEditorRouting
 }
  
@@ -98,7 +99,7 @@ struct ProfileEditorScreenDataModel {
 	var firstNameTextField: String
 	var lastNameTextField: String
 	let phoneNumberTextField: String
-	var emailTextField: String // попробовать переделать на Result<String, Error>
+	var emailTextField: String
 	var isEmailValid: Bool
 }
 
@@ -110,5 +111,9 @@ extension ProfileEditorScreenDataModel {
 		emailTextField = (profile.email ?? "")
 		isEmailValid = true
 	}
+	
+//	init (email: String) {
+//
+//	}
 }
 

@@ -13,9 +13,8 @@ import RxSwift
 // MARK: - Builder
 
 protocol ProfileBuildable: Buildable {
+	/// Экран профиля пользователя, который можно редактироватьы
   func build() -> ProfileRouting
-  
-  func buildScreenWithTableView() -> ProfileRouting
 }
 
 // MARK: - Router
@@ -29,13 +28,6 @@ protocol ProfileViewControllable: ViewControllable {}
 // MARK: - Interactor
 
 protocol ProfileRouting: ViewableRouting {
-  /// Переход на экран смены e-mail'a
-  func routeToEmailChange()
-  
-  /// Переход на экран добавления e-mail'a
-  func routeToEmailAddition()
-  
-  func routeToOrdersList()
 	func routeToEdit(profile: Profile)
 }
 
@@ -90,10 +82,6 @@ struct ProfilePresenterOutput {
 
 protocol ProfileViewOutput {
   /// Добавление / изменение e-mail'a
-  var emailUpdateTap: ControlEvent<Void> { get }
-  
-  var myOrdersTap: ControlEvent<Void> { get }
-  
   var retryButtonTap: ControlEvent<Void> { get }
   
   var pullToRefresh: ControlEvent<Void> { get }
@@ -108,8 +96,6 @@ struct ProfileViewModel: Equatable {
 
   let email: TitledOptionalText
   let phone: TitledOptionalText
-  
-  let myOrders: String
 }
 
 struct ErrorMessageViewModel: Equatable {

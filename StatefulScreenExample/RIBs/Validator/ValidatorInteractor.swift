@@ -74,10 +74,10 @@ extension ValidatorInteractor: IOTransformer {
 				return String(_code)
 			}
 
-		let requests = makeRequests()
+		let requests = makeRequests(updateProfilePhoneNumber: self.updateProfile(phoneNumber:))
 		
 		viewOutput.viewDidDisappear
-			.subscribe(onNext: { self.listener?.closedValidatorView() })
+			.subscribe(onNext: { [weak self] in self?.listener?.closedValidatorView() })
 			.disposed(by: disposeBag)
 		
 		StateTransform.transform(trait: trait,
@@ -87,7 +87,8 @@ extension ValidatorInteractor: IOTransformer {
 														 requests: requests,
 														 screenDataModel: _screenDataModel,
 														 disposeBag: disposeBag,
-														 listener: listener)
+														 listener: listener,
+														 phoneNumber: self.phoneNumber)
 		
 		return ValidatorInteractorOutput(state: trait.readOnlyState, screenDataModel: _screenDataModel.asObservable())
 	}
@@ -116,7 +117,8 @@ extension ValidatorInteractor {
 													requests: Requests,
 													screenDataModel: BehaviorRelay<ValidatorScreenDataModel>,
 													disposeBag: DisposeBag,
-													listener: ValidatorListener?) {
+													listener: ValidatorListener?,
+													phoneNumber: String) {
 			StateTransform.transitions {
 				// UserInput -> SendingCodeRequest
 				code.filter { text in text.count == 5 }
@@ -136,7 +138,7 @@ extension ValidatorInteractor {
 				// SendingCodeRequest -> UpdateProfile
 				responses.correctCode
 					.filteredByState(trait.readOnlyState, filter: bySendingCodeCheckRequestState)
-					.do(afterNext: { _ in requests.updateProfilePhoneNumber() })
+					.do(afterNext: { _ in requests.updateProfilePhoneNumber(phoneNumber) })
 					.map {_ in State.updatingProfile}
 				
 				// UpdateProfile -> sendingCodeRequest
@@ -146,7 +148,7 @@ extension ValidatorInteractor {
 					.filteredByState(trait.readOnlyState, filter: { state -> Bool in
 						guard case .updatingProfile = state else { return false }; return true
 					})
-					.do(afterNext: { _ in requests.updateProfilePhoneNumber() })
+					.do(afterNext: { _ in requests.updateProfilePhoneNumber(phoneNumber) })
 					.map {_ in State.updatingProfile}
 				
 				// UpdateProfile -> close
@@ -181,11 +183,9 @@ extension ValidatorInteractor {
 // MARK: - Help Methods
 
 extension ValidatorInteractor {
-	private func makeRequests() -> Requests {
+	private func makeRequests(updateProfilePhoneNumber: @escaping (String) -> Void) -> Requests {
 		Requests(checkCode: { [weak self] code in self?.checkCode(code: code) },
-						 updateProfilePhoneNumber: { [weak self] in
-							guard let self = self else { return }
-							self.updateProfile(phoneNumber: self.phoneNumber)})
+						 updateProfilePhoneNumber: { phoneNumber in updateProfilePhoneNumber(phoneNumber) } )
 	}
 }
 
@@ -203,6 +203,6 @@ extension ValidatorInteractor {
 	
 	private struct Requests {
 		let checkCode: (_ code: String) -> Void
-		let updateProfilePhoneNumber: VoidClosure
+		let updateProfilePhoneNumber: (_ phoneNumber: String) -> Void
 	}
 }

@@ -26,17 +26,8 @@ final class MainScreenRouter: ViewableRouter<MainScreenInteractable, MainScreenV
     interactor.router = self
   }
   
-  func routeToStackViewProfile() {
-    let router = profileBuilder.build()
-    attachChild(router)
-
-    viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController,
-                                                                             animated: true)
-    detachWhenClosed(child: router, disposedBy: disposeBag)
-  }
-  
   func routeToTableViewProfile() {
-    let router = profileBuilder.buildScreenWithTableView()
+    let router = profileBuilder.build()
     attachChild(router)
 		
     viewController.uiviewController.navigationController?.pushViewController(router.viewControllable.uiviewController,
@@ -44,7 +35,6 @@ final class MainScreenRouter: ViewableRouter<MainScreenInteractable, MainScreenV
     detachWhenClosed(child: router, disposedBy: disposeBag)
   }
 	
-	// Функция по переходу на регистрацию
 	func routeToAuthorization() {
 		let router = authorizationBuilder.build()
 		attachChild(router)

@@ -13,6 +13,8 @@ import RxSwift
 // MARK: - Builder
 
 protocol MainScreenBuildable: Buildable {
+	/// Основной экран, где происходят переходы между авторизацией
+	/// и экраном профиля пользователя
   func build() -> MainScreenRouting
 }
 
@@ -27,7 +29,6 @@ protocol MainScreenViewControllable: ViewControllable {}
 // MARK: - Interactor
 
 protocol MainScreenRouting: ViewableRouting {
-  func routeToStackViewProfile()
   func routeToAuthorization()
   func routeToTableViewProfile()
 }
@@ -35,7 +36,6 @@ protocol MainScreenRouting: ViewableRouting {
 // MARK: Outputs
 
 protocol MainScreenViewOutput {
-	var stackViewButtonTap: ControlEvent<Void> { get }
 	var tableViewButtonTap: ControlEvent<Void> { get }
 	var authorizationButtonTap: ControlEvent<Void> { get }
 }

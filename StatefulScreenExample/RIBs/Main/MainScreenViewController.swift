@@ -12,7 +12,6 @@ import RxCocoa
 import UIKit
 
 final class MainScreenViewController: UIViewController, MainScreenViewControllable {
-  @IBOutlet private weak var stackViewScreenButton: UIButton!
   @IBOutlet private weak var tableViewScreenButton: UIButton!
 	@IBOutlet private weak var authorizationButton: UIButton!
 	
@@ -27,7 +26,6 @@ extension MainScreenViewController: BindableView {
 
   func bindWith(_ input: Empty) {
 		disposeBag.insert {
-			stackViewScreenButton.rx.tap.bind(to: viewOutput.$stackViewButtonTap)
 			tableViewScreenButton.rx.tap.bind(to: viewOutput.$tableViewButtonTap)
 			authorizationButton.rx.tap.bind(to: viewOutput.$authorizationButtonTap)
 		}
@@ -42,7 +40,6 @@ extension MainScreenViewController: RibStoryboardInstantiatable {}
 
 extension MainScreenViewController {
 	private struct ViewOutput: MainScreenViewOutput {
-		@PublishControlEvent var stackViewButtonTap: ControlEvent<Void>
 		@PublishControlEvent var tableViewButtonTap: ControlEvent<Void>
 		@PublishControlEvent var authorizationButtonTap: ControlEvent<Void>
 	}

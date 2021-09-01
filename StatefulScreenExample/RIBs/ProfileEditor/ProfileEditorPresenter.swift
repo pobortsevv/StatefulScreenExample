@@ -46,7 +46,7 @@ extension ProfileEditorPresenter: IOTransformer {
 		.asSignalIgnoringError()
 		
 		let showError = state.map { state -> ErrorMessageViewModel? in
-			switch state { // заменить на guard
+			switch state {
 			case let .updateProfileError(error, _):
 				return ErrorMessageViewModel(title: error.localizedDescription, buttonTitle: "Повторить")
 			case .userInput, .routedToProfile, .updatingProfile:
@@ -59,12 +59,12 @@ extension ProfileEditorPresenter: IOTransformer {
 			switch state {
 			case .routedToProfile: return Void()
 			case .userInput, .updatingProfile, .updateProfileError: return nil
-				}
 			}
-			.map { true }
-			.distinctUntilChanged()
-			.asSignalIgnoringError()
-		
+		}
+		.map { true }
+		.distinctUntilChanged()
+		.asSignalIgnoringError()
+	
 		return ProfileEditorPresenterOutput(initialLoadingIndicatorVisible:
 																				initialLoadingIndicatorVisible,
 																				firstName: userName,

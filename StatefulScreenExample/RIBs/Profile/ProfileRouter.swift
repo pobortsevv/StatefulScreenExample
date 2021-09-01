@@ -30,25 +30,4 @@ final class ProfileRouter: ViewableRouter<ProfileInteractable, ProfileViewContro
 	
 		detachWhenClosed(child: router, disposedBy: DisposeBag())
 	}
-	
-  func routeToEmailChange() {
-    showStubAlert(title: "Смена e-mail")
-  }
-  
-  func routeToEmailAddition() {
-    showStubAlert(title: "Добавление e-mail")
-  }
-  
-  func routeToOrdersList() {
-    showStubAlert(title: "Список заказов")
-  }
-  
-  private func showStubAlert(title: String) {
-    let message = "Вместо этого сообщения в боевом проекте производится роутинг на нужный экран"
-    
-    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-    
-    viewController.uiviewController.present(alert, animated: true, completion: nil)
-  }
 }

@@ -12,19 +12,13 @@ import RxCocoa
 import UIKit
 
 final class ProfileEditorViewController: UIViewController, ProfileEditorPresentable, ProfileEditorViewControllable {
-	// сделать аутлеты приватными
-	@IBOutlet weak var nameTextField: CustomTextField!
-	@IBOutlet weak var secondNameTextField: CustomTextField!
-	@IBOutlet weak var phoneNumberTextField: CustomTextField!
-	@IBOutlet weak var emailTextField: CustomTextField!
+	@IBOutlet weak private var nameTextField: CustomTextField!
+	@IBOutlet weak private var secondNameTextField: CustomTextField!
+	@IBOutlet weak private var phoneNumberTextField: CustomTextField!
+	@IBOutlet weak private var emailTextField: CustomTextField!
 	
-	@IBOutlet weak var emailValidationErrorLabel: UILabel!
-	@IBOutlet weak var saveUpdateButton: UIButton!
-	
-	// удалить!
-	private let profileSuccessfullyUpdated = UIAlertController(title: "Профиль успешно обновлён",
-																														 message: nil,
-																														 preferredStyle: UIAlertController.Style.alert)
+	@IBOutlet weak private var emailValidationErrorLabel: UILabel!
+	@IBOutlet weak private var saveUpdateButton: UIButton!
 	
 	// Provider views
 	private let loadingIndicatorView = LoadingIndicatorView()
@@ -45,6 +39,8 @@ extension ProfileEditorViewController {
 	private func initialSetup() {
 		title = "Редактировать"
 		
+		let toolbar = UITextField.toolbarInitialSetup(target: self, selector: #selector(doneButtonTapped))
+		
 		nameTextField.layer.cornerRadius = 12
 		secondNameTextField.layer.cornerRadius = 12
 		phoneNumberTextField.layer.cornerRadius = 12
@@ -61,19 +57,6 @@ extension ProfileEditorViewController {
 		phoneNumberTextField.textColor = .gray
 		phoneNumberTextField.layer.borderColor = UIColor.lightGray.cgColor
 		phoneNumberTextField.layer.borderWidth = 1.0
-		tapGestureInitialSetup()
-	}
-	
-	// переименовать
-	private func tapGestureInitialSetup() {
-		let toolbar = UIToolbar()
-		
-		let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-		let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(doneButtonTapped))
-		
-		doneButton.tintColor = .green
-		toolbar.setItems([flexSpace, doneButton], animated: true)
-		toolbar.sizeToFit()
 		
 		nameTextField.inputAccessoryView = toolbar
 		secondNameTextField.inputAccessoryView = toolbar
@@ -148,9 +131,12 @@ extension ProfileEditorViewController {
 
 extension ProfileEditorViewController {
 	private func presentProfileSuccessUpdateAlert() {
-		self.profileSuccessfullyUpdated.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { [weak self] action in
+		let profileSuccessfullyUpdated = UIAlertController(title: "Профиль успешно обновлён",
+																															 message: nil,
+																															 preferredStyle: UIAlertController.Style.alert)
+		profileSuccessfullyUpdated.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { [weak self] action in
 			self?.viewOutput.$alertButtonTap.accept(Void())
 		}))
-		self.present(self.profileSuccessfullyUpdated, animated: true, completion: nil)
+		self.present(profileSuccessfullyUpdated, animated: true, completion: nil)
 	}
 }

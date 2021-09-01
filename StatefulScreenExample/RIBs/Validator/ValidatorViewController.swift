@@ -27,7 +27,7 @@ final class ValidatorViewController: UIViewController, ValidatorViewControllable
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		initailSetup()
+		initialSetup()
 	}
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
@@ -36,7 +36,7 @@ final class ValidatorViewController: UIViewController, ValidatorViewControllable
 }
 
 extension ValidatorViewController {
-	private func initailSetup() {
+	private func initialSetup() {
 		title = "Подтверждение кода"
 		
 		codeTextField.layer.cornerRadius = 12

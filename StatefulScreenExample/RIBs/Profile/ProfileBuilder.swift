@@ -10,24 +10,11 @@ import RIBs
 
 final class ProfileBuilder: Builder<RootDependency>, ProfileBuildable {
   func build() -> ProfileRouting {
-    let viewController = ProfileStackViewController.instantiateFromStoryboard()
-
-    return buildWith(viewController: viewController)
-  }
-  
-  func buildScreenWithTableView() -> ProfileRouting {
-    let viewController = ProfileTableViewController.instantiateFromStoryboard()
-    
-    return buildWith(viewController: viewController)
-  }
-  
-  private func buildWith<V: UIViewController>(viewController: V) -> ProfileRouting
-    where V: ProfileViewControllable & BindableView, V.Input == ProfilePresenterOutput, V.Output == ProfileViewOutput {
-    
-      let presenter = ProfilePresenter()
-      let interactor = ProfileInteractor(presenter: presenter, profileService: dependency.profileProvider)
-      
-      VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
+		let viewController = ProfileViewController.instantiateFromStoryboard()
+		let presenter = ProfilePresenter()
+		let interactor = ProfileInteractor(presenter: presenter, profileService: dependency.profileProvider)
+		
+		VIPBinder.bind(view: viewController, interactor: interactor, presenter: presenter)
       
 		return ProfileRouter(interactor: interactor, viewController: viewController, profileEditorBuilder: ProfileEditorBuilder(dependency: dependency))
   }

@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 
-final class ProfileTableViewController: UIViewController, ProfileViewControllable {
+final class ProfileViewController: UIViewController, ProfileViewControllable {
   @IBOutlet private weak var tableView: UITableView!
 	private let edit = UIBarButtonItem(title: "Edit",
 																		 style: .plain,
@@ -40,7 +40,7 @@ final class ProfileTableViewController: UIViewController, ProfileViewControllabl
   }
 }
 
-extension ProfileTableViewController {
+extension ProfileViewController {
   private func initialSetup() {
     title = "TableView Profile"
 
@@ -66,7 +66,7 @@ extension ProfileTableViewController {
 
 // MARK: - BindableView
 
-extension ProfileTableViewController: BindableView {
+extension ProfileViewController: BindableView {
   func getOutput() -> ProfileViewOutput {
     viewOutput
   }
@@ -112,20 +112,12 @@ extension ProfileTableViewController: BindableView {
   private func bindTableView(_ viewModel: Driver<ProfileViewModel>) {
     let sectionsSource = viewModel.map { viewModel -> [Section] in
 
-      let emailItem: RowItem
-      if let email = viewModel.email.maybeText {
-        emailItem = .email(TitledText(title: viewModel.email.title, text: email))
-      } else {
-        emailItem = .addEmail(viewModel.email.title)
-      }
-
       let rowItems: [RowItem] = [
 				.authorized(viewModel.authorized),
 				.contactOptionalText(viewModel.firstName),
 				.contactOptionalText(viewModel.lastName),
         .contactOptionalText(viewModel.phone),
-        emailItem,
-        .myOrders(viewModel.myOrders),
+				.contactOptionalText(viewModel.email),
       ]
 
       return [Section(title: nil, items: rowItems)]
@@ -137,9 +129,9 @@ extension ProfileTableViewController: BindableView {
 
 // MARK: - TableViewHelper
 
-extension ProfileTableViewController {
+extension ProfileViewController {
   private enum TableViewHelper: Namespace {
-    static func makeCellForRowDataSource(vc: ProfileTableViewController)
+    static func makeCellForRowDataSource(vc: ProfileViewController)
       -> RxTableViewSectionedAnimatedDataSource<Section>.ConfigureCell {
       return { _, tableView, indexPath, item -> UITableViewCell in
         switch item {
@@ -159,19 +151,9 @@ extension ProfileTableViewController {
           cell.view.setTitle(viewModel.title, text: viewModel.maybeText)
           return cell
 
-        case .addEmail(let title):
-          let cell: DisclosureTextCell = tableView.dequeue(forIndexPath: indexPath)
-          cell.view.setText(title)
-          return cell
-
         case .email(let viewModel):
           let cell: ContactFieldCell = tableView.dequeue(forIndexPath: indexPath)
           cell.view.setTitle(viewModel.title, text: viewModel.text)
-          return cell
-
-        case .myOrders(let title):
-          let cell: DisclosureTextCell = tableView.dequeue(forIndexPath: indexPath)
-          cell.view.setText(title)
           return cell
 				}
       }
@@ -179,33 +161,27 @@ extension ProfileTableViewController {
   }
 }
 
-extension ProfileTableViewController: UITableViewDelegate {
+extension ProfileViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let rowItem = dataSource[indexPath]
 
     switch rowItem {
 		case .authorized: break
-    case .addEmail: viewOutput.$emailUpdateTap.accept(Void())
-    case .email: viewOutput.$emailUpdateTap.accept(Void())
+    case .email: break
     case .contactField: break
     case .contactOptionalText: break
-    case .myOrders: viewOutput.$myOrdersTap.accept(Void())
     }
   }
 }
 
 // MARK: - RibStoryboardInstantiatable
 
-extension ProfileTableViewController: RibStoryboardInstantiatable {}
+extension ProfileViewController: RibStoryboardInstantiatable {}
 
 // MARK: - View Output
 
-extension ProfileTableViewController {
+extension ProfileViewController {
 	private struct ViewOutput: ProfileViewOutput {
-
-    @PublishControlEvent var emailUpdateTap: ControlEvent<Void>
-
-    @PublishControlEvent var myOrdersTap: ControlEvent<Void>
 
     @PublishControlEvent var retryButtonTap: ControlEvent<Void>
     
@@ -217,7 +193,7 @@ extension ProfileTableViewController {
 
 // MARK: Section & Row Item
 
-extension ProfileTableViewController {
+extension ProfileViewController {
   private struct Section: Hashable, AnimatableSectionModelType {
     var title: String?
     var items: [RowItem]
@@ -241,18 +217,14 @@ extension ProfileTableViewController {
 		case authorized(String)
     case contactField(TitledText)
     case contactOptionalText(TitledOptionalText)
-    case addEmail(String)
     case email(TitledText)
-    case myOrders(String)
 
     var identity: String {
       switch self {
 			case .authorized(let text): return text
       case .contactField(let viewModel): return viewModel.title
       case .contactOptionalText(let viewModel): return viewModel.title
-      case .addEmail(let message): return message
       case .email(let viewModel): return viewModel.title
-      case .myOrders(let text): return text
       }
     }
   }

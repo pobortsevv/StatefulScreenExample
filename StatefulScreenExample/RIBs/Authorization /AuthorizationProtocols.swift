@@ -13,13 +13,15 @@ import RxCocoa
 // MARK: - Builder
 
 protocol AuthorizationBuildable: Buildable {
-		func build() -> AuthorizationRouting
+	/// В Authorization модуле происходит ввод номера телефона
+	/// пользователем для последущей авторизации аккаунта
+	func build() -> AuthorizationRouting
 }
 
 // MARK: - Router
 
 protocol AuthorizationInteractable: Interactable, ValidatorListener {
-		var router: AuthorizationRouting? { get set }
+	var router: AuthorizationRouting? { get set }
 }
 
 protocol AuthorizationViewControllable: ViewControllable {}

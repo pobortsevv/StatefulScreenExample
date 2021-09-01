@@ -22,21 +22,19 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Введите номер телефона" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bd8-nc-sEM">
-                                <rect key="frame" x="78" y="208" width="255" height="26.5"/>
+                                <rect key="frame" x="16" y="164" width="382" height="26.5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="26.5" id="9YF-bW-c1D"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="255" id="IUQ-yU-Vr4"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DlU-YP-3g3" customClass="CustomTextField" customModule="StatefulScreenExample" customModuleProvider="target">
-                                <rect key="frame" x="35" y="290" width="343" height="46"/>
+                                <rect key="frame" x="35" y="241.5" width="343" height="46"/>
                                 <color key="backgroundColor" red="0.96861571069999997" green="0.96862143280000002" blue="0.96863609549999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="euO-k6-K8v"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="343" id="mwp-ub-AKh"/>
                                 </constraints>
                                 <color key="textColor" red="0.3763062358" green="0.72863394020000005" blue="0.34109976889999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -46,7 +44,6 @@
                                 <rect key="frame" x="27" y="802" width="359" height="56"/>
                                 <color key="backgroundColor" red="0.3763062358" green="0.72863394020000005" blue="0.34109976889999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="359" id="ISv-Xs-NrX"/>
                                     <constraint firstAttribute="height" constant="56" id="Ref-sT-zhP"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -55,11 +52,7 @@
                                 </state>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Будем звонить только, если не дойдут уведомления или смс" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wp2-sg-9Bu">
-                                <rect key="frame" x="54" y="244" width="304" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="36" id="DUD-rf-VNu"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="304" id="g8L-PC-qFw"/>
-                                </constraints>
+                                <rect key="frame" x="54" y="200" width="304" height="31.5"/>
                                 <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="13"/>
                                 <color key="textColor" systemColor="opaqueSeparatorColor"/>
                                 <nil key="highlightedColor"/>
@@ -75,15 +68,13 @@
                             <constraint firstItem="gQ2-DQ-gMd" firstAttribute="leading" secondItem="HgA-Aw-ocO" secondAttribute="leading" constant="27" id="P2C-GZ-6Tk"/>
                             <constraint firstItem="wp2-sg-9Bu" firstAttribute="top" secondItem="bd8-nc-sEM" secondAttribute="bottom" constant="9.5" id="SmF-Sw-1gB"/>
                             <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="gQ2-DQ-gMd" secondAttribute="trailing" constant="28" id="Xw2-ly-DAr"/>
-                            <constraint firstItem="bd8-nc-sEM" firstAttribute="leading" secondItem="HgA-Aw-ocO" secondAttribute="leading" constant="78" id="Yjn-Hx-uPS"/>
+                            <constraint firstItem="bd8-nc-sEM" firstAttribute="leading" secondItem="HgA-Aw-ocO" secondAttribute="leading" constant="16" id="Yjn-Hx-uPS"/>
                             <constraint firstItem="DlU-YP-3g3" firstAttribute="leading" secondItem="HgA-Aw-ocO" secondAttribute="leading" constant="35" id="fhC-6l-4U2"/>
-                            <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="bd8-nc-sEM" secondAttribute="trailing" constant="81" id="ge2-j6-w4C"/>
+                            <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="bd8-nc-sEM" secondAttribute="trailing" constant="16" id="ge2-j6-w4C"/>
                             <constraint firstItem="DlU-YP-3g3" firstAttribute="top" secondItem="wp2-sg-9Bu" secondAttribute="bottom" constant="10" id="jOz-hA-JFP"/>
-                            <constraint firstItem="wp2-sg-9Bu" firstAttribute="top" secondItem="bd8-nc-sEM" secondAttribute="bottom" constant="9.5" id="lcA-tk-vFe"/>
                             <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="wp2-sg-9Bu" secondAttribute="trailing" constant="56" id="x5j-U2-IZB"/>
                         </constraints>
                     </view>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="getSMSButton" destination="gQ2-DQ-gMd" id="bXS-bn-aYb"/>
                         <outlet property="phoneNumberTextField" destination="DlU-YP-3g3" id="Xug-Jc-1oF"/>

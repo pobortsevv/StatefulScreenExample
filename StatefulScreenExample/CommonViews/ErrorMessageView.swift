@@ -69,10 +69,10 @@ final class ErrorMessageView: UIView, ResetableView {
       titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
       trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 16),
       
-      button.heightAnchor.constraint(equalToConstant: 70),
+      button.heightAnchor.constraint(equalToConstant: 60),
       button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
       trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: 16),
-      safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: 16)
+      safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: 5)
     ]
     
     NSLayoutConstraint.activate(constraints)

@@ -65,8 +65,6 @@ extension ProfileInteractor: IOTransformer {
 														 requests: requests,
 														 routes: routes,
 														 profileUpdating: profileUpdating)
-    
-    bindStatefulRouting(viewOutput, trait: trait)
 		
 		viewOutput.editProfileTap
 			.filteredByState(trait.readOnlyState, filterMap: { state in
@@ -77,30 +75,6 @@ extension ProfileInteractor: IOTransformer {
 			.disposed(by: trait.disposeBag)
 		
     return trait.readOnlyState
-  }
-  
-  private func bindStatefulRouting(_ viewOutput: ProfileViewOutput, trait: StateTransformTrait<State>) {
-    let byDataLoadedState = StateTransform.byDataLoadedState
-    
-    viewOutput.emailUpdateTap.withLatestFrom(trait.readOnlyState).subscribe(onNext: { [weak self] state in
-      switch state {
-      case .dataLoaded(let profile):
-        if profile.email == nil {
-          // Если email'a ещё ещё нет - добавляем его
-          self?.router?.routeToEmailAddition()
-        } else {
-          // Ессли уже есть - меняем
-          self?.router?.routeToEmailChange()
-        }
-      default: break
-      }
-    }).disposed(by: trait.disposeBag)
-		
-		//  dataLoaded -> routeToProfileEditor
-    viewOutput.myOrdersTap.filteredByState(trait.readOnlyState, filter: byDataLoadedState)
-      .subscribe(onNext: { [weak self] _ in
-        self?.router?.routeToOrdersList()
-      }).disposed(by: trait.disposeBag)
   }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public typealias VoidClosure = () -> Void
 
@@ -131,3 +132,20 @@ extension String {
 	}
 }
 
+extension UITextField {
+	static func toolbarInitialSetup(target: Any?, selector: Selector?) -> UIToolbar {
+		let toolbar = UIToolbar(frame: CGRect(origin: .zero,
+																					size: CGSize(width: UIScreen.main.bounds.width,
+																											 height: 50)))
+
+		
+		let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: target, action: selector)
+		
+		doneButton.tintColor = .green
+		toolbar.setItems([flexSpace, doneButton], animated: true)
+		toolbar.sizeToFit()
+		
+		return toolbar
+	}
+}

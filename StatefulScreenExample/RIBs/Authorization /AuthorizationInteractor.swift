@@ -35,10 +35,10 @@ final class AuthorizationInteractor: PresentableInteractor<AuthorizationPresenta
 		super.init(presenter: presenter)
 	}
 	
-	private func recieveSMS(number: String?) {
+	private func receiveSMS(number: String?) {
 		authorizationProvider.checkNumber(number) { [weak self] result in
 			switch result {
-			case .success(let code): self?.responses.$didRecieveSMS.accept(code)
+			case .success(let code): self?.responses.$didReceiveSMS.accept(code)
 			case .failure(let error): self?.responses.$authorizationError.accept(error)
 			}
 		}
@@ -62,21 +62,11 @@ extension AuthorizationInteractor: IOTransformer {
 	func transform(input viewOutput: AuthorizationViewOutput) -> AuthorizationInteractorOutput {
 		let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
 		
-		let refinedPhone = viewOutput.phoneNumberTextChange
-			.map { phoneNumber -> String in
-				let _phoneNumber = phoneNumber
-					.removingCharacters(except: .arabicNumerals)
-					.prefix(11)
-				
-				return String(_phoneNumber)
-			}
-		
 		let requests = makeRequests()
 		let routes = makeRoutes()
 		
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,
-														 phoneNumber: refinedPhone,
 														 responses: responses,
 														 requests: requests,
 														 routes: routes,
@@ -106,13 +96,21 @@ extension AuthorizationInteractor {
 	
 		static func transform(trait: StateTransformTrait<State>,
 													viewOutput: AuthorizationViewOutput,
-													phoneNumber: Observable<String>,
 													responses: Responses,
 													requests: Requests,
 													routes: Routes,
 													screenDataModel: BehaviorRelay<AuthorizationScreenDataModel>,
 													disposeBag: DisposeBag,
 													externalEvents: ExternalEvents) {
+			let phoneNumber = viewOutput.phoneNumberTextChange
+			.map { phoneNumber -> String in
+				let _phoneNumber = phoneNumber
+					.removingCharacters(except: .arabicNumerals)
+					.prefix(11)
+				
+				return String(_phoneNumber)
+			}
+			
 			StateTransform.transitions {
 				// userInput -> sendingSMSCodeRequest
 				viewOutput.getSMSButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
@@ -133,7 +131,7 @@ extension AuthorizationInteractor {
 				.map { phoneNumber in State.sendingSMSCodeRequest(phoneNumber: phoneNumber) }
 				
 				// sendingSMSCodeRequest -> gotSMSCode
-				responses.didRecieveSMS.filteredByState(trait.readOnlyState) { state in
+				responses.didReceiveSMS.filteredByState(trait.readOnlyState) { state in
 					guard case .sendingSMSCodeRequest = state else { return false } ; return true
 				}
 				.observe(on: MainScheduler.instance)
@@ -179,11 +177,11 @@ extension AuthorizationInteractor {
 
 extension AuthorizationInteractor {
 	private func makeRequests() -> Requests {
-		Requests(recieveSMS: { [weak self] phoneNumber in self?.recieveSMS(number: phoneNumber) })
+		Requests(recieveSMS: { [weak self] phoneNumber in self?.receiveSMS(number: phoneNumber) })
 	}
 	
 	private func makeRoutes() -> Routes {
-		Routes(routeToValidator: { [weak self] formattedPhoneNumber in self?.router?.routeToValidator(phoneNumber: formattedPhoneNumber) },
+		Routes(routeToValidator: { [weak self] in self?.router?.routeToValidator(phoneNumber: $0) },
 					 close: { [weak self] in self?.router?.close()})
 	}
 }
@@ -192,7 +190,7 @@ extension AuthorizationInteractor {
 
 extension AuthorizationInteractor {
 	private struct Responses {
-		@PublishObservable var didRecieveSMS: Observable<String>
+		@PublishObservable var didReceiveSMS: Observable<String>
 		@PublishObservable var authorizationError: Observable<Error>
 	}
 	

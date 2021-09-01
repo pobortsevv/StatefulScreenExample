@@ -40,6 +40,7 @@ extension AuthorizationViewController {
 		notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
 		notificationCenter.delegate = self
 		
+		let toolbar = UITextField.toolbarInitialSetup(target: self, selector: #selector(doneButtonTapped))
 		
 		getSMSButton.layer.cornerRadius = 12
 		phoneNumberTextField.layer.cornerRadius = 12
@@ -49,19 +50,7 @@ extension AuthorizationViewController {
 		view.addStretchedToBounds(subview: loadingIndicatorView)
 		
 		errorMessageView.isVisible = false
-		
-		toolBarInitialSetup()
-	}
 	
-	private func toolBarInitialSetup() {
-		let toolbar = UIToolbar()
-		
-		let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-		let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(doneButtonTapped))
-		
-		toolbar.setItems([flexSpace, doneButton], animated: true)
-		toolbar.sizeToFit()
-		
 		phoneNumberTextField.inputAccessoryView = toolbar
 	}
 	

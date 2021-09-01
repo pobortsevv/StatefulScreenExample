@@ -42,7 +42,7 @@ extension ValidatorPresenter: IOTransformer {
 		let code = input.screenDataModel.map { screenDataModel -> String in
 			return screenDataModel.codeTextField
 		}
-		.asDriverIgnoringError() // -> Signal (Не получилось, появились баги)
+		.asDriverIgnoringError()
 		
 		let showNetworkError = Helper.networkError(state)
 		

@@ -23,3 +23,4 @@ final class CustomTextField: UITextField {
 		return CGRect(x: 16, y: 0, width: width, height: bounds.height)
 	}
 }
+

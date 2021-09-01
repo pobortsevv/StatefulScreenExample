@@ -13,7 +13,7 @@ final class LoadingIndicatorView: UIView {
 	// Create Animation object
 	
   let indicatorView = UIActivityIndicatorView()
-	let animationView = AnimationView()
+//	let animationView = AnimationView()
   
   required init?(coder: NSCoder) {
     super.init(coder: coder)
@@ -27,16 +27,16 @@ final class LoadingIndicatorView: UIView {
   }
   
   private func initialSetup() {
-		let animation = Animation.named("Watermelon")
+//		let animation = Animation.named("Watermelon")
 //		Bundle.main.path(forResource: <#T##String?#>, ofType: <#T##String?#>)
 		
     backgroundColor = UIColor.black.withAlphaComponent(0.15)
     
     indicatorView.translatesAutoresizingMaskIntoConstraints = false
-		animationView.animation = animation
+//		animationView.animation = animation
     addSubview(indicatorView)
-		animationView.play()
-		addSubview(animationView)
+//		animationView.play()
+//		addSubview(animationView)
 		
     
     let constraints: [NSLayoutConstraint] = [

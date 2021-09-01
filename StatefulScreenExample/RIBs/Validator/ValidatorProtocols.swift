@@ -13,6 +13,7 @@ import RxSwift
 // MARK: - Builder
 
 protocol ValidatorBuildable: Buildable {
+	/// На экране Validator выполняется подтверждение смс-кода
 	func build(phoneNumber: String, listener: ValidatorListener) -> ValidatorRouting
 }
 
@@ -90,7 +91,7 @@ struct ValidatorPresenterOutput {
 
 	let initialLoadingIndicatorVisible: Driver<Bool>
 
-	let code: Driver<String> // переделать на signal (Не получилось, появились баги)
+	let code: Driver<String>
 	let showNetworkError: Signal<String?>
 	let showValidationError: Signal<String?>
 }

@@ -10,8 +10,6 @@ import RIBs
 import RxCocoa
 import RxSwift
 
-
-
 final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresentable>, ProfileEditorInteractable {
 	weak var router: ProfileEditorRouting?
 	
@@ -61,38 +59,12 @@ final class ProfileEditorInteractor: PresentableInteractor<ProfileEditorPresenta
 extension ProfileEditorInteractor: IOTransformer {
 	func transform(input viewOutput: ProfileEditorViewOutput) -> ProfileEditorInteractorOutput {
 		let trait = StateTransformTrait(_state: _state, disposeBag: disposeBag)
-		
-		let refinedName = viewOutput.firstNameTextChange
-			.map { name -> String in
-				let _name = name.removingCharacters(except: .letters)
-				
-				return String(_name)
-			}
-		
-		let refinedSecondName = viewOutput.lastNameTextChange
-			.map { secondName -> String in
-				let _secondName = secondName
-					.removingCharacters(except: .letters)
-				
-				return String(_secondName)
-			}
-		
-		let refinedEmail = viewOutput.emailTextChange
-			.map { email -> String in
-				let _email = email
-					.removingCharacters(in: .whitespacesAndNewlines)
-				
-				return String(_email)
-			}
-		
+
 		let requests = makeRequests()
 		let routes = makeRoutes()
 		
 		StateTransform.transform(trait: trait,
 														 viewOutput: viewOutput,
-														 name: refinedName,
-														 secondName: refinedSecondName,
-														 email: refinedEmail,
 														 response: responses,
 														 requests: requests,
 														 checkEmail: self.checkEmail(_:),
@@ -100,13 +72,13 @@ extension ProfileEditorInteractor: IOTransformer {
 														 screenDataModel: _screenDataModel,
 														 disposeBag: disposeBag)
 		
-		bindStatefulRouting(viewOutput, trait: trait, routes: routes)
+		ProfileEditorInteractor.bindStatefulRouting(viewOutput, trait: trait, routes: routes)
 		
 		return ProfileEditorInteractorOutput(state: trait.readOnlyState,
 																				 screenDataModel: _screenDataModel.asObservable())
 	}
 	
-	private func bindStatefulRouting(_ viewOutput: ProfileEditorViewOutput,
+	static private func bindStatefulRouting(_ viewOutput: ProfileEditorViewOutput,
 																	 trait: StateTransformTrait<State>,
 																	 routes: Routes) {
 		viewOutput.alertButtonTap
@@ -115,7 +87,7 @@ extension ProfileEditorInteractor: IOTransformer {
 			})
 			.observe(on: MainScheduler.instance)
 			.subscribe(onNext: routes.close)
-			.disposed(by: disposeBag)
+			.disposed(by: trait.disposeBag)
 		
 	}
 }
@@ -137,15 +109,36 @@ extension ProfileEditorInteractor {
 		
 		static func transform(trait: StateTransformTrait<State>,
 													viewOutput: ProfileEditorViewOutput,
-													name: Observable<String>,
-													secondName: Observable<String>,
-													email: Observable<String>,
 													response: Responses,
 													requests: Requests,
 													checkEmail: @escaping (_ email: String) -> Bool,
 													emailValidation: EmailValidation,
 													screenDataModel: BehaviorRelay<ProfileEditorScreenDataModel>,
 													disposeBag: DisposeBag) {
+			
+			let name = viewOutput.firstNameTextChange
+				.map { name -> String in
+					let _name = name.removingCharacters(except: .letters)
+					
+					return String(_name)
+				}
+			
+			let secondName = viewOutput.lastNameTextChange
+				.map { secondName -> String in
+					let _secondName = secondName
+						.removingCharacters(except: .letters)
+					
+					return String(_secondName)
+				}
+			
+			let email = viewOutput.emailTextChange
+				.map { email -> String in
+					let _email = email
+						.removingCharacters(in: .whitespacesAndNewlines)
+					
+					return String(_email)
+				}
+			
 			StateTransform.transitions {
 				// UserInput -> UpdatingProfile
 				viewOutput.updateProfileButtonTap.filteredByState(trait.readOnlyState, filter: byUserInputState)
